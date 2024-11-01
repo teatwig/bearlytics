@@ -50,6 +50,7 @@ def hit(request):
     ua_string = request.META.get('HTTP_USER_AGENT', '')
     user_agent = user_agents.parse(ua_string)
     browser = user_agent.browser.family
+    browser = browser.replace("Mobile", "").replace("iOS", "").replace("WebView", "").strip()
     device = "Mobile" if user_agent.is_mobile else "Desktop"
 
     # Get country from CloudFlare header (if available)
@@ -69,8 +70,7 @@ def hit(request):
     if referrer == "":
         referrer = "direct"
 
-    referrer = referrer.replace('http://', '').replace('https://', '')
-    referrer = referrer.split('/')[0]
+    referrer = referrer.replace('http://', '').replace('https://', '').replace('www.', '').split('/')[0]
 
     # Extract basic language code
     language = extract_basic_language(request.META.get('HTTP_ACCEPT_LANGUAGE', ''))
