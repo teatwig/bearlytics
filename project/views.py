@@ -30,7 +30,6 @@ def extract_basic_language(lang_header):
     return lang_parts[0].split('-')[0]
 
 def hit(request):
-    print(request)
     if request.method == "OPTIONS":
         response = HttpResponse()
         response["Access-Control-Allow-Origin"] = "*"
@@ -62,12 +61,11 @@ def hit(request):
     hash_id = generate_id(ip, ua_string, date, SECRET)
 
     # Get path from query parameter
-    path = request.GET.get('path', '')
-    if not path or not path.startswith('/'):
+    path = request.GET.get('path', '/')
+    if not path.startswith('/'):
         path = '/' + path
 
-    # Set referrer to "direct" if empty
-    referrer = request.META.get('HTTP_X_FORWARDED_REFERRER', 'direct')
+    referrer = request.GET.get('referrer', 'direct')
 
     # Extract basic language code
     language = extract_basic_language(request.META.get('HTTP_ACCEPT_LANGUAGE', ''))
@@ -105,7 +103,7 @@ def get_top_metrics(column, start_time, end_time, limit=10):
 def dashboard(request):
     # Get time range from query params
     time_range = request.GET.get('range', '24h')
-    end_time = timezone.now().replace(minute=59, second=59, microsecond=999999)  # End of current hour
+    end_time = timezone.now().replace(minute=59, second=59, microsecond=999999)
     
     # Calculate start time based on range
     ranges = {

@@ -199,18 +199,12 @@
                 <ul class="metric-list">
                     <li class="metric-item">
                         <span class="metric-name">Path</span>
-                        <span class="metric-value">
-                            <span class="metric-name">Visitors</span>
-                            <span class="metric-name">Views</span>
-                        </span>
+                        <span class="metric-value">Visitors</span>
                     </li>
                     {% for page in top_pages %}
                     <li class="metric-item">
                         <span class="metric-name">{{ page.path }}</span>
-                        <span class="metric-value">
-                            <span>{{ page.visits }}</span>
-                            <span>{{ page.views }}</span>
-                        </span>
+                        <span class="metric-value">{{ page.visits }}</span>
                     </li>
                     {% endfor %}
                 </ul>
@@ -220,18 +214,12 @@
                 <ul class="metric-list">
                     <li class="metric-item">
                         <span class="metric-name">Referrer</span>
-                        <span class="metric-value">
-                            <span class="metric-name">Visitors</span>
-                            <span class="metric-name">Views</span>
-                        </span>
+                        <span class="metric-value">Visitors</span>
                     </li>
                     {% for ref in top_referrers %}
                     <li class="metric-item">
                         <span class="metric-name">{{ ref.referrer|default:"Direct" }}</span>
-                        <span class="metric-value">
-                            <span>{{ ref.visits|default:"0" }}</span>
-                            <span>{{ ref.views }}</span>
-                        </span>
+                        <span class="metric-value">{{ ref.visits }}</span>
                     </li>
                     {% endfor %}
                 </ul>
