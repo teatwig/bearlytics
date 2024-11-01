@@ -1,5 +1,6 @@
 asgiref==3.8.1
 Django==5.1.2
+gunicorn==21.2.0
 python-dotenv==1.0.1
 sqlparse==0.5.1
 whitenoise==6.8.2
