@@ -109,7 +109,6 @@ def get_top_metrics(column, start_time, end_time, limit=10):
     return (base_query
         .values(column)
         .annotate(
-            views=Count('hash_id'),
             visits=Count('hash_id', distinct=True)
         )
         .order_by('-visits')[:limit])

@@ -166,12 +166,12 @@
 
         <form id="timeRangeForm" action="{% url 'dashboard' %}" method="get">
             <div class="time-range">
-                <button type="submit" name="range" value="24h">Last 24 hours</button>
-                <button type="submit" name="range" value="7d">Last 7 days</button>
-                <button type="submit" name="range" value="30d">Last 30 days</button>
-                <button type="submit" name="range" value="90d">Last 90 days</button>
-                <button type="submit" name="range" value="180d">Last 180 days</button>
-                <button type="submit" name="range" value="365d">Last 365 days</button>
+                <button type="submit" name="range" value="24h">24 hours</button>
+                <button type="submit" name="range" value="7d">7 days</button>
+                <button type="submit" name="range" value="30d">30 days</button>
+                <button type="submit" name="range" value="90d">90 days</button>
+                <button type="submit" name="range" value="180d">180 days</button>
+                <button type="submit" name="range" value="365d">365 days</button>
             </div>
         </form>
 
@@ -230,7 +230,7 @@
                     <ul class="metric-list">
                         <li class="metric-item">
                             <span class="metric-name">Country</span>
-                            <span class="metric-value">Visits</span>
+                            <span class="metric-value">Visitors</span>
                         </li>
                         {% for country in top_countries %}
                         <li class="metric-item">
@@ -245,7 +245,7 @@
                     <ul class="metric-list">
                         <li class="metric-item">
                             <span class="metric-name">Device</span>
-                            <span class="metric-value">Visits</span>
+                            <span class="metric-value">Visitors</span>
                         </li>
                         {% for device in top_devices %}
                         <li class="metric-item">
@@ -260,7 +260,7 @@
                     <ul class="metric-list">
                         <li class="metric-item">
                             <span class="metric-name">Browser</span>
-                            <span class="metric-value">Visits</span>
+                            <span class="metric-value">Visitors</span>
                         </li>
                         {% for browser in top_browsers %}
                         <li class="metric-item">
