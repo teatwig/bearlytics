@@ -199,7 +199,7 @@
                 <ul class="metric-list">
                     <li class="metric-item">
                         <span class="metric-name">Path</span>
-                        <span class="metric-value">Visitors</span>
+                        <span class="metric-value">Visits</span>
                     </li>
                     {% for page in top_pages %}
                     <li class="metric-item">
@@ -214,11 +214,11 @@
                 <ul class="metric-list">
                     <li class="metric-item">
                         <span class="metric-name">Referrer</span>
-                        <span class="metric-value">Visitors</span>
+                        <span class="metric-value">Visits</span>
                     </li>
                     {% for ref in top_referrers %}
                     <li class="metric-item">
-                        <span class="metric-name">{{ ref.referrer|default:"Direct" }}</span>
+                        <span class="metric-name">{{ ref.referrer }}</span>
                         <span class="metric-value">{{ ref.visits }}</span>
                     </li>
                     {% endfor %}
@@ -230,12 +230,12 @@
                     <ul class="metric-list">
                         <li class="metric-item">
                             <span class="metric-name">Country</span>
-                            <span class="metric-value">Visitors</span>
+                            <span class="metric-value">Visits</span>
                         </li>
                         {% for country in top_countries %}
                         <li class="metric-item">
                             <span class="metric-name">{{ country.country }}</span>
-                            <span class="metric-value">{{ country.views }}</span>
+                            <span class="metric-value">{{ country.visits }}</span>
                         </li>
                         {% endfor %}
                     </ul>
@@ -245,12 +245,12 @@
                     <ul class="metric-list">
                         <li class="metric-item">
                             <span class="metric-name">Device</span>
-                            <span class="metric-value">Visitors</span>
+                            <span class="metric-value">Visits</span>
                         </li>
                         {% for device in top_devices %}
                         <li class="metric-item">
                             <span class="metric-name">{{ device.device }}</span>
-                            <span class="metric-value">{{ device.views }}</span>
+                            <span class="metric-value">{{ device.visits }}</span>
                         </li>
                         {% endfor %}
                     </ul>
@@ -260,12 +260,12 @@
                     <ul class="metric-list">
                         <li class="metric-item">
                             <span class="metric-name">Browser</span>
-                            <span class="metric-value">Visitors</span>
+                            <span class="metric-value">Visits</span>
                         </li>
                         {% for browser in top_browsers %}
                         <li class="metric-item">
                             <span class="metric-name">{{ browser.browser }}</span>
-                            <span class="metric-value">{{ browser.views }}</span>
+                            <span class="metric-value">{{ browser.visits }}</span>
                         </li>
                         {% endfor %}
                     </ul>

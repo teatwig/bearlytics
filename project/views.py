@@ -66,6 +66,11 @@ def hit(request):
         path = '/' + path
 
     referrer = request.GET.get('ref', 'direct')
+    if referrer == "":
+        referrer = "direct"
+
+    referrer = referrer.replace('http://', '').replace('https://', '')
+    referrer = referrer.split('/')[0]
 
     # Extract basic language code
     language = extract_basic_language(request.META.get('HTTP_ACCEPT_LANGUAGE', ''))
@@ -98,7 +103,7 @@ def get_top_metrics(column, start_time, end_time, limit=10):
             views=Count('hash_id'),
             visits=Count('hash_id', distinct=True)
         )
-        .order_by('-views')[:limit])
+        .order_by('-visits')[:limit])
 
 def dashboard(request):
     # Get time range from query params
