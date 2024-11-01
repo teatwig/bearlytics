@@ -56,6 +56,8 @@ coverage.xml
 *.log
 local_settings.py
 db.sqlite3
+db.sqlite3-shm
+db.sqlite3-wal
 dev.db
 dev.db.backup
 db.json
@@ -112,3 +114,4 @@ venv.bak/
 # Testing tools
 fixture.json
 sync_data.sh
+

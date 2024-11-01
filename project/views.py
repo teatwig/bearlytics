@@ -58,8 +58,15 @@ def hit(request):
     # Get country from CloudFlare header (if available)
     country = request.META.get('HTTP_CF_IPCOUNTRY', 'unknown')
 
+    
+    # Get the real IP address
+    ip = request.META.get('HTTP_X_FORWARDED_FOR', '') or \
+         request.META.get('HTTP_CF_CONNECTING_IP', '') or \
+         request.META.get('REMOTE_ADDR', '')
+    # If X-Forwarded-For contains multiple IPs, take the first one
+    ip = ip.split(',')[0].strip()
+
     # Generate ID using IP, User Agent, current date, and secret
-    ip = request.META.get('REMOTE_ADDR')
     date = timezone.now().strftime('%Y-%m-%d')
     hash_id = generate_id(ip, ua_string, date, SECRET)
 
