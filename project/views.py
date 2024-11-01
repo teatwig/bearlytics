@@ -128,6 +128,7 @@ def dashboard(request):
     
     # Get overall stats
     stats = base_query.aggregate(
+        views=Count('hash_id'),
         visits=Count(Concat('hash_id', 'path'), distinct=True),
         visitors=Count('hash_id', distinct=True),
         unique_pages=Count('path', distinct=True),
@@ -157,9 +158,12 @@ def dashboard(request):
         .annotate(period=truncate_func('timestamp'))
         .values('period')
         .annotate(
-            visitors=Count('hash_id', distinct=True),
+            views=Count('id'),
             visits=Count(
-                'hash_id',
+                'id',
+                filter=Q(timestamp__in=Subquery(
+                    first_occurrences.values('first_time')
+                ))
             )
         )
         .order_by('period')
@@ -167,8 +171,8 @@ def dashboard(request):
     
     # Format time series data for the template
     time_labels = []
+    views_data = []
     visits_data = []
-    visitors_data = []
     
     # Create time slots and initialize with zeros
     current = start_time
@@ -178,8 +182,8 @@ def dashboard(request):
     
     while current <= end_time_slots:
         time_labels.append(current.strftime(date_format))
+        views_data.append(0)
         visits_data.append(0)
-        visitors_data.append(0)
         if duration <= timedelta(hours=24):
             current += timedelta(hours=1)
         else:
@@ -187,20 +191,21 @@ def dashboard(request):
     
     # Fill in actual data
     time_data_map = {
-        ts['period'].strftime(date_format): (ts['visits'], ts['visitors']) 
+        ts['period'].strftime(date_format): (ts['views'], ts['visits']) 
         for ts in time_series
     }
     
     for i, label in enumerate(time_labels):
         if label in time_data_map:
-            visits_data[i] = time_data_map[label][0]
-            visitors_data[i] = time_data_map[label][1]
+            views_data[i] = time_data_map[label][0]
+            visits_data[i] = time_data_map[label][1]
+            total_time_series_visits += time_data_map[label][1]  # Add sum
     
     context = {
         'stats': stats,
         'time_labels': time_labels,
+        'views_data': views_data,
         'visits_data': visits_data,
-        'visitors_data': visitors_data,
         'top_pages': get_top_metrics('path', start_time, end_time),
         'top_referrers': get_top_metrics('referrer', start_time, end_time),
         'top_countries': get_top_metrics('country', start_time, end_time),

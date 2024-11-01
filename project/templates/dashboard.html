@@ -282,11 +282,11 @@ function utcToLocal(utcStr) {
 
 // Ensure data is properly formatted for JavaScript
 const timeLabels = {{ time_labels|safe }};
-const visitorsData = {{ visitors_data|safe }};
+const viewsData = {{ views_data|safe }};
 const visitsData = {{ visits_data|safe }};
 
 console.log('Time Labels:', timeLabels);
-console.log('Visitors Data:', visitorsData);
+console.log('Views Data:', viewsData);
 console.log('Visits Data:', visitsData);
 
 const ctx = document.getElementById('viewsChart').getContext('2d');
@@ -306,7 +306,7 @@ for (let i = 0; i < timeLabels.length; i++) {
     let date = utcToLocal(timeLabels[i], timeRange === '24h' ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD');
     parsedData.push({
         x: date,
-        visitors: visitorsData[i],
+        views: viewsData[i],
         visits: visitsData[i]
     });
 }
@@ -338,14 +338,14 @@ new Chart(ctx, {
         datasets: [
             {
                 label: 'Visitors',
-                data: parsedData.map(d => ({ x: d.x, y: d.visitors })),
+                data: parsedData.map(d => ({ x: d.x, y: d.visits })),
                 backgroundColor: '#3787ec',
                 borderColor: '#3787ec',
                 borderWidth: 1
             },
             {
-                label: 'Visits',
-                data: parsedData.map(d => ({ x: d.x, y: d.visits })),
+                label: 'Views',
+                data: parsedData.map(d => ({ x: d.x, y: d.views })),
                 backgroundColor: '#adccf8',
                 borderColor: '#3787ec',
                 borderWidth: 1
