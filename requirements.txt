@@ -3,4 +3,5 @@ Django==5.1.2
 gunicorn==21.2.0
 python-dotenv==1.0.1
 sqlparse==0.5.1
+user-agents==2.2.0
 whitenoise==6.8.2

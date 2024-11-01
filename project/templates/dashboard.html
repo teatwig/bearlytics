@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bearlytics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h2 {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            height: 400px;
+        }
+
+        #viewsChart {
+            height: 100%;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .bottom-metrics {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-card h3 {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .metric-list {
+            list-style: none;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .metric-name {
+            color: #666;
+            flex-grow: 1;
+        }
+
+        .metric-value {
+            display: flex;
+            gap: 1rem;
+            text-align: right;
+            min-width: 120px;
+            justify-content: flex-end;
+        }
+
+        .time-range {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .time-range button {
+            background-color: #3787ec;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .time-range button:hover {
+            background-color: #2a6bbf;
+        }
+
+        .time-range button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(55, 135, 236, 0.5);
+        }
+    </style>
+</head>
+<body lang="">
+    <div class="container">
+        <h1>Bearlytics Dashboard</h1>
+
+        <form id="timeRangeForm" action="{% url 'dashboard' %}" method="get">
+            <div class="time-range">
+                <button type="submit" name="range" value="24h">Last 24 hours</button>
+                <button type="submit" name="range" value="7d">Last 7 days</button>
+                <button type="submit" name="range" value="30d">Last 30 days</button>
+                <button type="submit" name="range" value="90d">Last 90 days</button>
+                <button type="submit" name="range" value="180d">Last 180 days</button>
+                <button type="submit" name="range" value="365d">Last 365 days</button>
+            </div>
+        </form>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h2>Views</h2>
+                <p>{{ stats.views }}</p>
+            </div>
+            <div class="stat-card">
+                <h2>Visits</h2>
+                <p>{{ stats.visits }}</p>
+            </div>
+            <div class="stat-card">
+                <h2>Visitors</h2>
+                <p>{{ stats.visitors }}</p>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="viewsChart"></canvas>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <ul class="metric-list">
+                    <li class="metric-item">
+                        <span class="metric-name">Path</span>
+                        <span class="metric-value">
+                            <span class="metric-name">Visitors</span>
+                            <span class="metric-name">Views</span>
+                        </span>
+                    </li>
+                    {% for page in top_pages %}
+                    <li class="metric-item">
+                        <span class="metric-name">{{ page.path }}</span>
+                        <span class="metric-value">
+                            <span>{{ page.visits }}</span>
+                            <span>{{ page.views }}</span>
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="metric-card">
+                <ul class="metric-list">
+                    <li class="metric-item">
+                        <span class="metric-name">Referrer</span>
+                        <span class="metric-value">
+                            <span class="metric-name">Visitors</span>
+                            <span class="metric-name">Views</span>
+                        </span>
+                    </li>
+                    {% for ref in top_referrers %}
+                    <li class="metric-item">
+                        <span class="metric-name">{{ ref.referrer|default:"Direct" }}</span>
+                        <span class="metric-value">
+                            <span>{{ ref.visits|default:"0" }}</span>
+                            <span>{{ ref.views }}</span>
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="bottom-metrics">
+                <div class="metric-card">
+                    <ul class="metric-list">
+                        <li class="metric-item">
+                            <span class="metric-name">Country</span>
+                            <span class="metric-value">Visitors</span>
+                        </li>
+                        {% for country in top_countries %}
+                        <li class="metric-item">
+                            <span class="metric-name">{{ country.country }}</span>
+                            <span class="metric-value">{{ country.views }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="metric-card">
+                    <ul class="metric-list">
+                        <li class="metric-item">
+                            <span class="metric-name">Device</span>
+                            <span class="metric-value">Visitors</span>
+                        </li>
+                        {% for device in top_devices %}
+                        <li class="metric-item">
+                            <span class="metric-name">{{ device.device }}</span>
+                            <span class="metric-value">{{ device.views }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="metric-card">
+                    <ul class="metric-list">
+                        <li class="metric-item">
+                            <span class="metric-name">Browser</span>
+                            <span class="metric-value">Visitors</span>
+                        </li>
+                        {% for browser in top_browsers %}
+                        <li class="metric-item">
+                            <span class="metric-name">{{ browser.browser }}</span>
+                            <span class="metric-value">{{ browser.views }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+// Ensure data is properly formatted for JavaScript
+const timeLabels = {{ time_labels|safe }};
+const viewsData = {{ views_data|safe }};
+const visitsData = {{ visits_data|safe }};
+
+console.log('Time Labels:', timeLabels);
+console.log('Views Data:', viewsData);
+console.log('Visits Data:', visitsData);
+
+const ctx = document.getElementById('viewsChart').getContext('2d');
+
+// Get the current time range from the URL
+const urlParams = new URLSearchParams(window.location.search);
+const timeRange = urlParams.get('range') || '24h';
+
+// Configure time unit and display format based on time range
+let timeUnit = 'hour';
+let displayFormat = 'ha';
+let tooltipFormat = 'MMM D, ha';
+let parsedData = [];
+
+// Create array of data points with proper date objects
+for (let i = 0; i < timeLabels.length; i++) {
+    let date = moment(timeLabels[i], timeRange === '24h' ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD');
+    parsedData.push({
+        x: date,
+        views: viewsData[i],
+        visits: visitsData[i]
+    });
+}
+
+switch(timeRange) {
+    case '24h':
+        timeUnit = 'hour';
+        displayFormat = 'ha';
+        tooltipFormat = 'MMM D, ha';
+        break;
+    case '7d':
+    case '30d':
+        timeUnit = 'day';
+        displayFormat = 'MMM D';
+        tooltipFormat = 'MMM D, YYYY';
+        break;
+    case '90d':
+    case '180d':
+    case '365d':
+        timeUnit = 'day';
+        displayFormat = 'MMM D';
+        tooltipFormat = 'MMM D, YYYY';
+        break;
+}
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        datasets: [
+            {
+                label: 'Visitors',
+                data: parsedData.map(d => ({ x: d.x, y: d.visits })),
+                backgroundColor: '#3787ec',
+                borderColor: '#3787ec',
+                borderWidth: 1
+            },
+            {
+                label: 'Views',
+                data: parsedData.map(d => ({ x: d.x, y: d.views })),
+                backgroundColor: '#adccf8',
+                borderColor: '#3787ec',
+                borderWidth: 1
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        },
+        plugins: {
+            legend: {
+                position: 'top'
+            },
+            tooltip: {
+                callbacks: {
+                    title: function(context) {
+                        return moment(context[0].raw.x).format(tooltipFormat);
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                stacked: true,
+                type: 'time',
+                time: {
+                    unit: timeUnit,
+                    displayFormats: {
+                        hour: 'ha',
+                        day: displayFormat
+                    }
+                },
+                grid: {
+                    display: false
+                }
+            },
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: '#f0f0f0'
+                }
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>

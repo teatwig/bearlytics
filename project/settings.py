@@ -12,6 +12,9 @@ DEBUG = os.getenv('DEBUG') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 
+TIME_ZONE = 'UTC'
+USE_TZ = True
+
 
 # Application definition
 INSTALLED_APPS = [
