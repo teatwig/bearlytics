@@ -275,6 +275,11 @@
     </div>
 
 <script>
+// Add this helper function at the start of the script
+function utcToLocal(utcStr) {
+    return moment.utc(utcStr).local();
+}
+
 // Ensure data is properly formatted for JavaScript
 const timeLabels = {{ time_labels|safe }};
 const viewsData = {{ views_data|safe }};
@@ -298,7 +303,7 @@ let parsedData = [];
 
 // Create array of data points with proper date objects
 for (let i = 0; i < timeLabels.length; i++) {
-    let date = moment(timeLabels[i], timeRange === '24h' ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD');
+    let date = utcToLocal(timeLabels[i], timeRange === '24h' ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD');
     parsedData.push({
         x: date,
         views: viewsData[i],
@@ -361,7 +366,7 @@ new Chart(ctx, {
             tooltip: {
                 callbacks: {
                     title: function(context) {
-                        return moment(context[0].raw.x).format(tooltipFormat);
+                        return moment.utc(context[0].raw.x).local().format(tooltipFormat);
                     }
                 }
             }
@@ -379,6 +384,11 @@ new Chart(ctx, {
                 },
                 grid: {
                     display: false
+                },
+                adapters: {
+                    date: {
+                        zone: 'local' // Ensure local timezone is used
+                    }
                 }
             },
             y: {
