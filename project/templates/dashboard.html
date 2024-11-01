@@ -163,7 +163,14 @@
 <body lang="">
     <div class="container">
         <h1>Bearlytics Dashboard</h1>
-
+        <select name="project" id="project">
+            <option value="">bearblog.dev</option>
+            <option value="">justsketch.me</option>
+            <option value="">herman.bearblog.dev</option>
+            {% for project in projects %}
+            <option value="{{ project.id }}">{{ project.name }}</option>
+            {% endfor %}
+        </select>
         <form id="timeRangeForm" action="{% url 'dashboard' %}" method="get">
             <div class="time-range">
                 <button type="submit" name="range" value="24h">24 hours</button>

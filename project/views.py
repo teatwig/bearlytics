@@ -51,6 +51,13 @@ def hit(request):
     # Parse User-Agent
     ua_string = request.META.get('HTTP_USER_AGENT', '')
     user_agent = user_agents.parse(ua_string)
+    
+    # Skip bots
+    if (user_agent.is_bot or 
+        any(bot_keyword in ua_string.lower() 
+            for bot_keyword in ['bot', 'crawler', 'spider', 'headless', 'puppet'])):
+        return response
+        
     browser = user_agent.browser.family
     browser = browser.replace("Mobile", "").replace("iOS", "").replace("WebView", "").strip()
     device = "Mobile" if user_agent.is_mobile else "Desktop"
