@@ -65,7 +65,7 @@ def hit(request):
     if not path.startswith('/'):
         path = '/' + path
 
-    referrer = request.GET.get('referrer', 'direct')
+    referrer = request.GET.get('ref', 'direct')
 
     # Extract basic language code
     language = extract_basic_language(request.META.get('HTTP_ACCEPT_LANGUAGE', ''))
