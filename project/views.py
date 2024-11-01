@@ -1,12 +1,14 @@
 from datetime import timedelta
 from django.utils import timezone
+from django.db.models import Q
 import hashlib
 import base64
-import user_agents  # You'll need to pip install pyyaml ua-parser user-agents
+import user_agents
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Count
-from django.db.models.functions import TruncHour, TruncDay, Concat
+from django.db.models.functions import TruncHour, TruncDay, Concat, ExtractHour
+from django.db.models import Subquery, Min
 from .models import PageView
 
 # Transparent 1x1 pixel PNG
@@ -144,13 +146,25 @@ def dashboard(request):
         date_format = '%Y-%m-%d'
     
     # Get time series data
+    first_occurrences = (
+        base_query
+        .values('hash_id', 'path')
+        .annotate(first_time=Min('timestamp'))
+        .values('hash_id', 'path', 'first_time')
+    )
+
     time_series = (
         base_query
         .annotate(period=truncate_func('timestamp'))
         .values('period')
         .annotate(
             views=Count('id'),
-            visits=Count('hash_id', distinct=True)
+            visits=Count(
+                'id',
+                filter=Q(timestamp__in=Subquery(
+                    first_occurrences.values('first_time')
+                ))
+            )
         )
         .order_by('period')
     )
@@ -162,7 +176,10 @@ def dashboard(request):
     
     # Create time slots and initialize with zeros
     current = start_time
-    end_time_slots = timezone.now() + timedelta(hours=1)  # Include current hour
+    end_time_slots = timezone.now() + timedelta(hours=1)
+    
+    total_time_series_visits = 0  # Add counter
+    
     while current <= end_time_slots:
         time_labels.append(current.strftime(date_format))
         views_data.append(0)
@@ -182,6 +199,7 @@ def dashboard(request):
         if label in time_data_map:
             views_data[i] = time_data_map[label][0]
             visits_data[i] = time_data_map[label][1]
+            total_time_series_visits += time_data_map[label][1]  # Add sum
     
     context = {
         'stats': stats,
