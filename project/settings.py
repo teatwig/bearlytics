@@ -57,7 +57,8 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DB_PATH = os.getenv('DB_PATH', '/app/db/db.sqlite3')
+DB_PATH = os.getenv('DB_PATH', 'app/db/db.sqlite3')
+os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 with sqlite3.connect(DB_PATH) as conn:
     conn.execute('PRAGMA cache_size = 10000;')
