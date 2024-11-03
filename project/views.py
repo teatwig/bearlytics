@@ -128,27 +128,23 @@ def dashboard(request, project):
     }
     start_time = end_time - ranges.get(time_range, ranges['24h'])
     
-    # Create and evaluate base query once
-    base_queryset = PageView.objects.filter(
+    # Create base query once for reuse
+    base_query = PageView.objects.filter(
         project=project,
         timestamp__range=(start_time, end_time)
-    ).select_related()  # Eager load related fields
+    )
     
-    # Execute all top metrics queries in a single pass
-    metrics_columns = ['path', 'referrer', 'country', 'device', 'browser']
-    top_metrics = {}
-    
-    for column in metrics_columns:
-        result = (base_queryset
+    def get_top_metrics(column, limit=10):
+        """Helper function to get top metrics for a given column"""
+        return (base_query
             .values(column)
             .annotate(
                 visits=Count('hash_id', distinct=True)
             )
-            .order_by('-visits')[:10])
-        top_metrics[f'top_{column}s'] = list(result)  # Evaluate query immediately
+            .order_by('-visits')[:limit])
     
-    # Get overall stats in a single query
-    stats = base_queryset.aggregate(
+    # Get overall stats
+    stats = base_query.aggregate(
         views=Count('hash_id'),
         visits=Count(Concat('hash_id', 'path'), distinct=True),
         visitors=Count('hash_id', distinct=True),
@@ -167,22 +163,24 @@ def dashboard(request, project):
         date_format = '%Y-%m-%d'
     
     # Get time series data
-    first_occurrences = list(
-        base_queryset
+    first_occurrences = (
+        base_query
         .values('hash_id', 'path')
         .annotate(first_time=Min('timestamp'))
         .values('hash_id', 'path', 'first_time')
     )
 
-    time_series = list(
-        base_queryset
+    time_series = (
+        base_query
         .annotate(period=truncate_func('timestamp'))
         .values('period')
         .annotate(
             views=Count('id'),
             visits=Count(
                 'id',
-                filter=Q(timestamp__in=[fo['first_time'] for fo in first_occurrences])
+                filter=Q(timestamp__in=Subquery(
+                    first_occurrences.values('first_time')
+                ))
             )
         )
         .order_by('period')
@@ -220,15 +218,18 @@ def dashboard(request, project):
             visits_data[i] = time_data_map[label][1]
             total_time_series_visits += time_data_map[label][1]
     
-    # Combine context with top metrics
     context = {
         'project': project,
         'stats': stats,
         'time_labels': time_labels,
         'views_data': views_data,
         'visits_data': visits_data,
+        'top_pages': get_top_metrics('path'),
+        'top_referrers': get_top_metrics('referrer'),
+        'top_countries': get_top_metrics('country'),
+        'top_devices': get_top_metrics('device'),
+        'top_browsers': get_top_metrics('browser'),
         'selected_range': time_range,
-        **top_metrics  # Unpack all top metrics into context
     }
     
     return render(request, 'dashboard.html', context)
