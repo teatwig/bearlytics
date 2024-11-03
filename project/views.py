@@ -1,4 +1,5 @@
 from datetime import timedelta
+import os
 from django.utils import timezone
 from django.db.models import Q
 import hashlib
@@ -11,25 +12,18 @@ from django.db.models.functions import TruncHour, TruncDay, Concat, ExtractHour
 from django.db.models import Subquery, Min
 from .models import PageView
 
-# Transparent 1x1 pixel PNG
 PIXEL = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=")
 
-# Add a secret string constant
-SECRET = "I'ts only magic if you don't know how it works"
 
-def generate_id(ip, ua, date, secret):
-    """Generate a unique ID using SHA-256"""
-    data = f"{ip}|{ua}|{date}|{secret}"
-    return hashlib.sha256(data.encode()).hexdigest()
+SALT_SECRET = os.getenv("SALT_SECRET")
+    
 
 def extract_basic_language(lang_header):
-    """Extract the basic language code from Accept-Language header"""
     if not lang_header:
         return "unknown"
-    # Split the language header by commas and take the first part
     lang_parts = lang_header.split(',')
-    # Split the first part by hyphen or semicolon and take the first element
     return lang_parts[0].split('-')[0]
+
 
 def hit(request):
     if request.method == "OPTIONS":
@@ -44,7 +38,6 @@ def hit(request):
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
-    # Add CORS headers
     response["Access-Control-Allow-Origin"] = "*"
     response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
 
@@ -59,25 +52,24 @@ def hit(request):
         return response
         
     browser = user_agent.browser.family
-    browser = browser.replace("Mobile", "").replace("iOS", "").replace("WebView", "").strip()
+    browser = browser.replace("Mobile", "").replace("iOS", "").replace("WebView", "").replace("UI/WK", "").strip()
     device = "Mobile" if user_agent.is_mobile else "Desktop"
 
     # Get country from CloudFlare header (if available)
     country = request.META.get('HTTP_CF_IPCOUNTRY', 'unknown')
 
-    
     # Get the real IP address
     ip = request.META.get('HTTP_X_FORWARDED_FOR', '') or \
          request.META.get('HTTP_CF_CONNECTING_IP', '') or \
          request.META.get('REMOTE_ADDR', '')
-    # If X-Forwarded-For contains multiple IPs, take the first one
     ip = ip.split(',')[0].strip()
 
     # Generate ID using IP, User Agent, current date, and secret
     date = timezone.now().strftime('%Y-%m-%d')
-    hash_id = generate_id(ip, ua_string, date, SECRET)
+    data = f"{ip}|{ua_string}|{date}|{SALT_SECRET}"
+    hash_id = hashlib.sha256(data.encode()).hexdigest()
 
-    # Get path from query parameter
+    # Get path, ref, and project from query parameter
     path = request.GET.get('path', '/')
     if not path.startswith('/'):
         path = '/' + path
@@ -85,15 +77,13 @@ def hit(request):
     referrer = request.GET.get('ref', 'direct')
     if referrer == "":
         referrer = "direct"
+    referrer = referrer.replace('http://', '').replace('https://', '').replace('www.', '').split('/')[0]
 
     project = request.GET.get('project', 'default')
-
-    referrer = referrer.replace('http://', '').replace('https://', '').replace('www.', '').split('/')[0]
 
     # Extract basic language code
     language = extract_basic_language(request.META.get('HTTP_ACCEPT_LANGUAGE', ''))
 
-    # Create pageview record
     PageView.objects.create(
         project=project,
         hash_id=hash_id,
@@ -107,17 +97,20 @@ def hit(request):
 
     return response
 
+
 def all_hits(request):
-    """Display all recorded hits"""
     hits = PageView.objects.all().order_by('-timestamp')
     return render(request, 'all_hits.html', {'hits': hits})
 
+
+def projects(request):
+    return HttpResponse("<a href='/justsketchme/dashboard/'>JustSketchMe</a> | <a href='/hermans-blog/dashboard/'>Herman's blog</a>")
+
+
 def dashboard(request, project):
-    # Get time range from query params
     time_range = request.GET.get('range', '24h')
     end_time = timezone.now().replace(minute=59, second=59, microsecond=999999)
     
-    # Calculate start time based on range
     ranges = {
         '24h': timedelta(hours=24),
         '7d': timedelta(days=7),
