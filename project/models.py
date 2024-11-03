@@ -1,6 +1,7 @@
 from django.db import models
 
 class PageView(models.Model):
+    project = models.CharField(max_length=255, default="default", db_index=True)
     hash_id = models.CharField(max_length=64, db_index=True, blank=True)
     path = models.CharField(max_length=2048, db_index=True)
     referrer = models.CharField(max_length=2048, db_index=True, null=True, blank=True)

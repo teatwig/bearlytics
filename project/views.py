@@ -86,6 +86,8 @@ def hit(request):
     if referrer == "":
         referrer = "direct"
 
+    project = request.GET.get('project', 'default')
+
     referrer = referrer.replace('http://', '').replace('https://', '').replace('www.', '').split('/')[0]
 
     # Extract basic language code
@@ -93,6 +95,7 @@ def hit(request):
 
     # Create pageview record
     PageView.objects.create(
+        project=project,
         hash_id=hash_id,
         path=path,
         referrer=referrer,
@@ -109,18 +112,7 @@ def all_hits(request):
     hits = PageView.objects.all().order_by('-timestamp')
     return render(request, 'all_hits.html', {'hits': hits})
 
-def get_top_metrics(column, start_time, end_time, limit=10):
-    base_query = PageView.objects.filter(timestamp__range=(start_time, end_time))
-    
-    # All metrics should track both views and visits (unique hash_ids)
-    return (base_query
-        .values(column)
-        .annotate(
-            visits=Count('hash_id', distinct=True)
-        )
-        .order_by('-visits')[:limit])
-
-def dashboard(request):
+def dashboard(request, project):
     # Get time range from query params
     time_range = request.GET.get('range', '24h')
     end_time = timezone.now().replace(minute=59, second=59, microsecond=999999)
@@ -136,11 +128,27 @@ def dashboard(request):
     }
     start_time = end_time - ranges.get(time_range, ranges['24h'])
     
-    # Base query for the time period
-    base_query = PageView.objects.filter(timestamp__range=(start_time, end_time))
+    # Create and evaluate base query once
+    base_queryset = PageView.objects.filter(
+        project=project,
+        timestamp__range=(start_time, end_time)
+    ).select_related()  # Eager load related fields
     
-    # Get overall stats
-    stats = base_query.aggregate(
+    # Execute all top metrics queries in a single pass
+    metrics_columns = ['path', 'referrer', 'country', 'device', 'browser']
+    top_metrics = {}
+    
+    for column in metrics_columns:
+        result = (base_queryset
+            .values(column)
+            .annotate(
+                visits=Count('hash_id', distinct=True)
+            )
+            .order_by('-visits')[:10])
+        top_metrics[f'top_{column}s'] = list(result)  # Evaluate query immediately
+    
+    # Get overall stats in a single query
+    stats = base_queryset.aggregate(
         views=Count('hash_id'),
         visits=Count(Concat('hash_id', 'path'), distinct=True),
         visitors=Count('hash_id', distinct=True),
@@ -159,24 +167,22 @@ def dashboard(request):
         date_format = '%Y-%m-%d'
     
     # Get time series data
-    first_occurrences = (
-        base_query
+    first_occurrences = list(
+        base_queryset
         .values('hash_id', 'path')
         .annotate(first_time=Min('timestamp'))
         .values('hash_id', 'path', 'first_time')
     )
 
-    time_series = (
-        base_query
+    time_series = list(
+        base_queryset
         .annotate(period=truncate_func('timestamp'))
         .values('period')
         .annotate(
             views=Count('id'),
             visits=Count(
                 'id',
-                filter=Q(timestamp__in=Subquery(
-                    first_occurrences.values('first_time')
-                ))
+                filter=Q(timestamp__in=[fo['first_time'] for fo in first_occurrences])
             )
         )
         .order_by('period')
@@ -191,7 +197,7 @@ def dashboard(request):
     current = start_time
     end_time_slots = timezone.now() + timedelta(hours=1)
     
-    total_time_series_visits = 0  # Add counter
+    total_time_series_visits = 0
     
     while current <= end_time_slots:
         time_labels.append(current.strftime(date_format))
@@ -212,19 +218,17 @@ def dashboard(request):
         if label in time_data_map:
             views_data[i] = time_data_map[label][0]
             visits_data[i] = time_data_map[label][1]
-            total_time_series_visits += time_data_map[label][1]  # Add sum
+            total_time_series_visits += time_data_map[label][1]
     
+    # Combine context with top metrics
     context = {
+        'project': project,
         'stats': stats,
         'time_labels': time_labels,
         'views_data': views_data,
         'visits_data': visits_data,
-        'top_pages': get_top_metrics('path', start_time, end_time),
-        'top_referrers': get_top_metrics('referrer', start_time, end_time),
-        'top_countries': get_top_metrics('country', start_time, end_time),
-        'top_devices': get_top_metrics('device', start_time, end_time),
-        'top_browsers': get_top_metrics('browser', start_time, end_time),
         'selected_range': time_range,
+        **top_metrics  # Unpack all top metrics into context
     }
     
     return render(request, 'dashboard.html', context)

@@ -12,6 +12,7 @@
     <h1>All Page Hits</h1>
     <table>
         <tr>
+            <th>Project</th>
             <th>Hash_ID</th>
             <th>Path</th>
             <th>Referrer</th>
@@ -23,6 +24,7 @@
         </tr>
         {% for hit in hits %}
         <tr>
+            <td>{{ hit.project }}</td>
             <td>{{ hit.hash_id }}</td>
             <td>{{ hit.path }}</td>
             <td>{{ hit.referrer }}</td>
