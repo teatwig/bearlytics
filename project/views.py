@@ -1,14 +1,17 @@
 from datetime import timedelta
 import os
+import random
+import string
 from django.utils import timezone
 from django.db.models import Q
 import hashlib
 import base64
 import user_agents
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib import messages
 from django.http import HttpResponse
 from django.db.models import Count
-from django.db.models.functions import TruncHour, TruncDay, Concat, ExtractHour
+from django.db.models.functions import TruncHour, TruncDay, Concat
 from django.db.models import Subquery, Min
 from .models import PageView, Website
 
@@ -103,7 +106,25 @@ def all_hits(request):
     return render(request, 'all_hits.html', {'hits': hits})
 
 
+def generate_website_id():
+    # Generate a random 7-character string using uppercase letters
+    return ''.join(random.choices(string.ascii_uppercase, k=7))
+
 def websites(request):
+    if request.method == 'POST':
+        website_name = request.POST.get('website_name')
+        if website_name:
+            website_id = generate_website_id()
+            # Create new website object
+            Website.objects.create(
+                name=website_name,
+                id=website_id
+            )
+            messages.success(request, 'Website added successfully!')
+            return redirect('websites')
+        else:
+            messages.error(request, 'Website name is required.')
+    
     websites = Website.objects.all()
     return render(request, 'websites.html', {"websites": websites})
 
