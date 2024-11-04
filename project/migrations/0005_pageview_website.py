@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pageview',
             name='website',
-            field=models.ForeignKey(default='XYZ123', on_delete=django.db.models.deletion.CASCADE, to='project.website'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='project.website'),
             preserve_default=False,
         ),
     ]
