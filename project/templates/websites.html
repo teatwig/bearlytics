@@ -21,6 +21,7 @@
                     {% for website in websites %}
                     <li class="flex justify-between items-center py-3">
                         <span class="text-gray-800">{{ website.name }}</span>
+                        <input type="text" readonly value='<script data-site="{{ website.id }}" src="//{{ request.get_host }}/script.js" defer></script>' style="width:50%; background-color: #f0f0f0; text-align:center">
                         <a 
                             href="{% url 'dashboard' website_id=website.id %}" 
                             class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors"
