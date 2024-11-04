@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEARLYTICS COMMAND CENTER</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
+    <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            terminal: {
+              green: '#33ff00',
+              black: '#0a0a0a',
+              gray: '#232323'
+            }
+          },
+          fontFamily: {
+            mono: ['Space Mono', 'IBM Plex Mono', 'Courier New', 'monospace']
+          }
+        }
+      }
+    }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-terminal-black text-terminal-green font-mono min-h-screen p-4">
+    <div class="max-w-[1400px] mx-auto">
+        <!-- Header with NASA-style title -->
+        <header class="border-2 border-terminal-green p-4 mb-8">
+            <h1 class="text-3xl tracking-wider">BEARLYTICS COMMAND CENTER</h1>
+            <div class="flex justify-between items-center mt-2">
+                <h2 class="text-xl">PROJECT: {{ project }}</h2>
+                <div class="text-right">
+                    <div id="currentTime" class="text-xl">--:--:--</div>
+                    <div id="currentDate" class="text-sm">--/--/----</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Time Range Controls styled like control panel buttons -->
+        <form id="timeRangeForm" action="{% url 'dashboard' project=project %}" method="get" class="mb-8">
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-2">
+                <button type="submit" name="range" value="24h" class="border-2 border-terminal-green bg-terminal-gray hover:bg-terminal-green hover:text-terminal-black px-4 py-2 transition-colors">24 HOURS</button>
+                <button type="submit" name="range" value="7d" class="border-2 border-terminal-green bg-terminal-gray hover:bg-terminal-green hover:text-terminal-black px-4 py-2 transition-colors">7 DAYS</button>
+                <button type="submit" name="range" value="30d" class="border-2 border-terminal-green bg-terminal-gray hover:bg-terminal-green hover:text-terminal-black px-4 py-2 transition-colors">30 DAYS</button>
+                <button type="submit" name="range" value="90d" class="border-2 border-terminal-green bg-terminal-gray hover:bg-terminal-green hover:text-terminal-black px-4 py-2 transition-colors">90 DAYS</button>
+                <button type="submit" name="range" value="180d" class="border-2 border-terminal-green bg-terminal-gray hover:bg-terminal-green hover:text-terminal-black px-4 py-2 transition-colors">180 DAYS</button>
+                <button type="submit" name="range" value="365d" class="border-2 border-terminal-green bg-terminal-gray hover:bg-terminal-green hover:text-terminal-black px-4 py-2 transition-colors">365 DAYS</button>
+            </div>
+        </form>
+
+        <!-- Main stats panel -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="border-2 border-terminal-green p-4">
+                <h2 class="text-sm mb-2">TOTAL VIEWS</h2>
+                <p class="text-4xl font-semibold">{{ stats.views }}</p>
+            </div>
+            <div class="border-2 border-terminal-green p-4">
+                <h2 class="text-sm mb-2">TOTAL VISITS</h2>
+                <p class="text-4xl font-semibold">{{ stats.visits }}</p>
+            </div>
+            <div class="border-2 border-terminal-green p-4">
+                <h2 class="text-sm mb-2">UNIQUE VISITORS</h2>
+                <p class="text-4xl font-semibold">{{ stats.visitors }}</p>
+            </div>
+        </div>
+
+        <!-- Chart panel -->
+        <div class="border-2 border-terminal-green p-4 mb-8">
+            <div class="h-[400px]">
+                <canvas id="viewsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Pages Panel -->
+            <div class="border-2 border-terminal-green p-4">
+                <h3 class="text-lg mb-4 border-b-2 border-terminal-green pb-2">TOP PAGES</h3>
+                <ul class="space-y-2">
+                    {% for page in top_pages %}
+                    <li class="flex justify-between items-center">
+                        <span class="truncate">{{ page.path }}</span>
+                        <span class="ml-4">{{ page.visits }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Referrers Panel -->
+            <div class="border-2 border-terminal-green p-4">
+                <h3 class="text-lg mb-4 border-b-2 border-terminal-green pb-2">REFERRERS</h3>
+                <ul class="space-y-2">
+                    {% for ref in top_referrers %}
+                    <li class="flex justify-between items-center">
+                        <span class="truncate">{{ ref.referrer }}</span>
+                        <span class="ml-4">{{ ref.visits }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Bottom Metrics -->
+            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Countries Panel -->
+                <div class="border-2 border-terminal-green p-4">
+                    <h3 class="text-lg mb-4 border-b-2 border-terminal-green pb-2">COUNTRIES</h3>
+                    <ul class="space-y-2">
+                        {% for country in top_countries %}
+                        <li class="flex justify-between items-center">
+                            <span>{{ country.country }}</span>
+                            <span>{{ country.visits }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Devices Panel -->
+                <div class="border-2 border-terminal-green p-4">
+                    <h3 class="text-lg mb-4 border-b-2 border-terminal-green pb-2">DEVICES</h3>
+                    <ul class="space-y-2">
+                        {% for device in top_devices %}
+                        <li class="flex justify-between items-center">
+                            <span>{{ device.device }}</span>
+                            <span>{{ device.visits }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Browsers Panel -->
+                <div class="border-2 border-terminal-green p-4">
+                    <h3 class="text-lg mb-4 border-b-2 border-terminal-green pb-2">BROWSERS</h3>
+                    <ul class="space-y-2">
+                        {% for browser in top_browsers %}
+                        <li class="flex justify-between items-center">
+                            <span>{{ browser.browser }}</span>
+                            <span>{{ browser.visits }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+// Time display
+function updateTime() {
+    const now = new Date();
+    document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', { hour12: false });
+    document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+// Chart configuration
+function utcToLocal(utcStr) {
+    return moment.utc(utcStr).local();
+}
+
+const timeLabels = {{ time_labels|safe }};
+const viewsData = {{ views_data|safe }};
+const visitsData = {{ visits_data|safe }};
+
+const ctx = document.getElementById('viewsChart').getContext('2d');
+const urlParams = new URLSearchParams(window.location.search);
+const timeRange = urlParams.get('range') || '24h';
+
+let timeUnit = 'hour';
+let displayFormat = 'HH:mm';
+let tooltipFormat = 'MMM D, HH:mm';
+let parsedData = [];
+
+for (let i = 0; i < timeLabels.length; i++) {
+    let date = utcToLocal(timeLabels[i]);
+    parsedData.push({
+        x: date,
+        views: viewsData[i],
+        visits: visitsData[i]
+    });
+}
+
+switch(timeRange) {
+    case '24h':
+        timeUnit = 'hour';
+        displayFormat = 'HH:mm';
+        tooltipFormat = 'MMM D, HH:mm';
+        break;
+    case '7d':
+    case '30d':
+        timeUnit = 'day';
+        displayFormat = 'MMM D';
+        tooltipFormat = 'MMM D, YYYY';
+        break;
+    case '90d':
+    case '180d':
+    case '365d':
+        timeUnit = 'day';
+        displayFormat = 'MMM D';
+        tooltipFormat = 'MMM D, YYYY';
+        break;
+}
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        datasets: [
+            {
+                label: 'VISITORS',
+                data: parsedData.map(d => ({ x: d.x, y: d.visits })),
+                backgroundColor: '#33ff00',
+                borderColor: '#33ff00',
+                borderWidth: 1
+            },
+            {
+                label: 'VIEWS',
+                data: parsedData.map(d => ({ x: d.x, y: d.views })),
+                backgroundColor: '#1a4d1a',
+                borderColor: '#33ff00',
+                borderWidth: 1
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            intersect: false,
+            mode: 'index'
+        },
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    color: '#33ff00',
+                    font: {
+                        family: 'IBM Plex Mono'
+                    }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    title: function(context) {
+                        return moment.utc(context[0].raw.x).local().format(tooltipFormat);
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                stacked: true,
+                type: 'time',
+                time: {
+                    unit: timeUnit,
+                    displayFormats: {
+                        hour: displayFormat,
+                        day: displayFormat
+                    }
+                },
+                grid: {
+                    color: '#1a4d1a'
+                },
+                ticks: {
+                    color: '#33ff00',
+                    font: {
+                        family: 'IBM Plex Mono'
+                    }
+                }
+            },
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: '#1a4d1a'
+                },
+                ticks: {
+                    color: '#33ff00',
+                    font: {
+                        family: 'IBM Plex Mono'
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>

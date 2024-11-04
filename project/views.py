@@ -5,12 +5,12 @@ from django.db.models import Q
 import hashlib
 import base64
 import user_agents
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.db.models import Count
 from django.db.models.functions import TruncHour, TruncDay, Concat, ExtractHour
 from django.db.models import Subquery, Min
-from .models import PageView
+from .models import PageView, Website
 
 PIXEL = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=")
 
@@ -25,7 +25,9 @@ def extract_basic_language(lang_header):
     return lang_parts[0].split('-')[0]
 
 
-def hit(request):
+def hit(request, website_id):
+    website = get_object_or_404(Website, id=website_id)
+
     if request.method == "OPTIONS":
         response = HttpResponse()
         response["Access-Control-Allow-Origin"] = "*"
@@ -79,13 +81,11 @@ def hit(request):
         referrer = "direct"
     referrer = referrer.replace('http://', '').replace('https://', '').replace('www.', '').split('/')[0]
 
-    project = request.GET.get('project', 'default')
-
     # Extract basic language code
     language = extract_basic_language(request.META.get('HTTP_ACCEPT_LANGUAGE', ''))
 
     PageView.objects.create(
-        project=project,
+        website=website,
         hash_id=hash_id,
         path=path,
         referrer=referrer,
@@ -103,11 +103,14 @@ def all_hits(request):
     return render(request, 'all_hits.html', {'hits': hits})
 
 
-def projects(request):
-    return HttpResponse("<a href='/justsketchme/dashboard/'>JustSketchMe</a> | <a href='/hermans-blog/dashboard/'>Herman's blog</a>")
+def websites(request):
+    websites = Website.objects.all()
+    return render(request, 'websites.html', {"websites": websites})
 
 
-def dashboard(request, project):
+def dashboard(request, website_id):
+    website = get_object_or_404(Website, id=website_id)
+
     time_range = request.GET.get('range', '24h')
     end_time = timezone.now().replace(minute=59, second=59, microsecond=999999)
     
@@ -120,10 +123,10 @@ def dashboard(request, project):
         '365d': timedelta(days=365)
     }
     start_time = end_time - ranges.get(time_range, ranges['24h'])
-    
+
     # Create base query once for reuse
     base_query = PageView.objects.filter(
-        project=project,
+        website=website,
         timestamp__range=(start_time, end_time)
     )
     
@@ -212,7 +215,7 @@ def dashboard(request, project):
             total_time_series_visits += time_data_map[label][1]
     
     context = {
-        'project': project,
+        'website': website,
         'stats': stats,
         'time_labels': time_labels,
         'views_data': views_data,

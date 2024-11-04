@@ -4,269 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bearlytics Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
-
-        body {
-            background: #f5f5f5;
-            padding: 2rem;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1, h2 {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 2rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .stat-card h2 {
-            font-size: 0.875rem;
-            color: #666;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-card p {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .chart-container {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            height: 400px;
-        }
-
-        #viewsChart {
-            height: 100%;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-
-        @media (min-width: 768px) {
-            .metrics-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .bottom-metrics {
-            grid-column: 1 / -1;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .metric-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .metric-card h3 {
-            font-size: 1rem;
-            color: #333;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #eee;
-        }
-
-        .metric-list {
-            list-style: none;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .metric-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #f5f5f5;
-        }
-
-        .metric-name {
-            color: #666;
-            flex-grow: 1;
-        }
-
-        .metric-value {
-            display: flex;
-            gap: 1rem;
-            text-align: right;
-            min-width: 120px;
-            justify-content: flex-end;
-        }
-
-        .time-range {
-            margin-bottom: 2rem;
-            display: flex;
-            flex-flow: row wrap;
-            gap: 0.5rem;
-        }
-
-        .time-range button {
-            background-color: #3787ec;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .time-range button:hover {
-            background-color: #2a6bbf;
-        }
-
-        .time-range button:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(55, 135, 236, 0.5);
-        }
-    </style>
 </head>
-<body lang="">
-    <div class="container">
-        <h1>Bearlytics Dashboard</h1>
-        <h2>Project: {{ project }}</h2>
-        <form id="timeRangeForm" action="{% url 'dashboard' project=project %}" method="get">
-            <div class="time-range">
-                <button type="submit" name="range" value="24h">24 hours</button>
-                <button type="submit" name="range" value="7d">7 days</button>
-                <button type="submit" name="range" value="30d">30 days</button>
-                <button type="submit" name="range" value="90d">90 days</button>
-                <button type="submit" name="range" value="180d">180 days</button>
-                <button type="submit" name="range" value="365d">365 days</button>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-2xl text-gray-800 mb-8">Bearlytics</h1>
+        <h2 class="text-xl text-gray-700 mb-8">Website: {{ website.name }}</h2>
+
+        <form id="timeRangeForm" action="{% url 'dashboard' website_id=website.id %}" method="get" class="mb-8">
+            <div class="flex flex-wrap gap-2">
+                <button type="submit" name="range" value="24h" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">24 hours</button>
+                <button type="submit" name="range" value="7d" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">7 days</button>
+                <button type="submit" name="range" value="30d" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">30 days</button>
+                <button type="submit" name="range" value="90d" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">90 days</button>
+                <button type="submit" name="range" value="180d" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">180 days</button>
+                <button type="submit" name="range" value="365d" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">365 days</button>
             </div>
         </form>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h2>Views</h2>
-                <p>{{ stats.views }}</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-sm text-gray-600 mb-2">Views</h2>
+                <p class="text-2xl font-semibold text-gray-800">{{ stats.views }}</p>
             </div>
-            <div class="stat-card">
-                <h2>Visits</h2>
-                <p>{{ stats.visits }}</p>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-sm text-gray-600 mb-2">Visits</h2>
+                <p class="text-2xl font-semibold text-gray-800">{{ stats.visits }}</p>
             </div>
-            <div class="stat-card">
-                <h2>Visitors</h2>
-                <p>{{ stats.visitors }}</p>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-sm text-gray-600 mb-2">Visitors</h2>
+                <p class="text-2xl font-semibold text-gray-800">{{ stats.visitors }}</p>
             </div>
         </div>
 
-        <div class="chart-container">
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8 h-[400px]">
             <canvas id="viewsChart"></canvas>
         </div>
 
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <ul class="metric-list">
-                    <li class="metric-item">
-                        <span class="metric-name">Path</span>
-                        <span class="metric-value">Visits</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <ul class="divide-y divide-gray-100">
+                    <li class="flex justify-between items-center py-2">
+                        <span class="text-gray-600">Path</span>
+                        <span class="text-gray-600">Visits</span>
                     </li>
                     {% for page in top_pages %}
-                    <li class="metric-item">
-                        <span class="metric-name">{{ page.path }}</span>
-                        <span class="metric-value">{{ page.visits }}</span>
+                    <li class="flex justify-between items-center py-2">
+                        <span class="text-gray-600">{{ page.path }}</span>
+                        <span class="text-gray-800">{{ page.visits }}</span>
                     </li>
                     {% endfor %}
                 </ul>
             </div>
 
-            <div class="metric-card">
-                <ul class="metric-list">
-                    <li class="metric-item">
-                        <span class="metric-name">Referrer</span>
-                        <span class="metric-value">Visits</span>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <ul class="divide-y divide-gray-100">
+                    <li class="flex justify-between items-center py-2">
+                        <span class="text-gray-600">Referrer</span>
+                        <span class="text-gray-600">Visits</span>
                     </li>
                     {% for ref in top_referrers %}
-                    <li class="metric-item">
-                        <span class="metric-name">{{ ref.referrer }}</span>
-                        <span class="metric-value">{{ ref.visits }}</span>
+                    <li class="flex justify-between items-center py-2">
+                        <span class="text-gray-600">{{ ref.referrer }}</span>
+                        <span class="text-gray-800">{{ ref.visits }}</span>
                     </li>
                     {% endfor %}
                 </ul>
             </div>
 
-            <div class="bottom-metrics">
-                <div class="metric-card">
-                    <ul class="metric-list">
-                        <li class="metric-item">
-                            <span class="metric-name">Country</span>
-                            <span class="metric-value">Visitors</span>
+            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <ul class="divide-y divide-gray-100">
+                        <li class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">Country</span>
+                            <span class="text-gray-600">Visitors</span>
                         </li>
                         {% for country in top_countries %}
-                        <li class="metric-item">
-                            <span class="metric-name">{{ country.country }}</span>
-                            <span class="metric-value">{{ country.visits }}</span>
+                        <li class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">{{ country.country }}</span>
+                            <span class="text-gray-800">{{ country.visits }}</span>
                         </li>
                         {% endfor %}
                     </ul>
                 </div>
 
-                <div class="metric-card">
-                    <ul class="metric-list">
-                        <li class="metric-item">
-                            <span class="metric-name">Device</span>
-                            <span class="metric-value">Visitors</span>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <ul class="divide-y divide-gray-100">
+                        <li class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">Device</span>
+                            <span class="text-gray-600">Visitors</span>
                         </li>
                         {% for device in top_devices %}
-                        <li class="metric-item">
-                            <span class="metric-name">{{ device.device }}</span>
-                            <span class="metric-value">{{ device.visits }}</span>
+                        <li class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">{{ device.device }}</span>
+                            <span class="text-gray-800">{{ device.visits }}</span>
                         </li>
                         {% endfor %}
                     </ul>
                 </div>
 
-                <div class="metric-card">
-                    <ul class="metric-list">
-                        <li class="metric-item">
-                            <span class="metric-name">Browser</span>
-                            <span class="metric-value">Visitors</span>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <ul class="divide-y divide-gray-100">
+                        <li class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">Browser</span>
+                            <span class="text-gray-600">Visitors</span>
                         </li>
                         {% for browser in top_browsers %}
-                        <li class="metric-item">
-                            <span class="metric-name">{{ browser.browser }}</span>
-                            <span class="metric-value">{{ browser.visits }}</span>
+                        <li class="flex justify-between items-center py-2">
+                            <span class="text-gray-600">{{ browser.browser }}</span>
+                            <span class="text-gray-800">{{ browser.visits }}</span>
                         </li>
                         {% endfor %}
                     </ul>
@@ -276,12 +125,10 @@
     </div>
 
 <script>
-// Add this helper function at the start of the script
 function utcToLocal(utcStr) {
     return moment.utc(utcStr).local();
 }
 
-// Ensure data is properly formatted for JavaScript
 const timeLabels = {{ time_labels|safe }};
 const viewsData = {{ views_data|safe }};
 const visitsData = {{ visits_data|safe }};
@@ -291,18 +138,14 @@ console.log('Views Data:', viewsData);
 console.log('Visits Data:', visitsData);
 
 const ctx = document.getElementById('viewsChart').getContext('2d');
-
-// Get the current time range from the URL
 const urlParams = new URLSearchParams(window.location.search);
 const timeRange = urlParams.get('range') || '24h';
 
-// Configure time unit and display format based on time range
 let timeUnit = 'hour';
 let displayFormat = 'ha';
 let tooltipFormat = 'MMM D, ha';
 let parsedData = [];
 
-// Create array of data points with proper date objects
 for (let i = 0; i < timeLabels.length; i++) {
     let date = utcToLocal(timeLabels[i], timeRange === '24h' ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD');
     parsedData.push({
@@ -388,7 +231,7 @@ new Chart(ctx, {
                 },
                 adapters: {
                     date: {
-                        zone: 'local' // Ensure local timezone is used
+                        zone: 'local'
                     }
                 }
             },
