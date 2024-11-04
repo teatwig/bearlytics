@@ -238,9 +238,9 @@ def dashboard(request, website_id):
     context = {
         'website': website,
         'stats': stats,
-        'time_labels': time_labels,
-        'views_data': views_data,
-        'visits_data': visits_data,
+        'time_labels': time_labels[1:],
+        'views_data': views_data[1:],
+        'visits_data': visits_data[1:],
         'top_pages': get_top_metrics('path'),
         'top_referrers': get_top_metrics('referrer'),
         'top_countries': get_top_metrics('country'),
