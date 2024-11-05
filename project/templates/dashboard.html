@@ -35,6 +35,30 @@
             </div>
         </form>
 
+        {% if path_filter %}
+        <div class="mb-8">
+            <div class="flex items-center gap-2">
+                <span class="text-gray-600">Filtering by path:</span>
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                    {{ path_filter }}
+                    <a href="{% url 'dashboard' website_id=website.id %}?range={{ selected_range }}{% if referrer_filter %}&referrer={{ referrer_filter|urlencode }}{% endif %}" class="ml-2 text-blue-600 hover:text-blue-800">×</a>
+                </span>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if referrer_filter %}
+        <div class="mb-8">
+            <div class="flex items-center gap-2">
+                <span class="text-gray-600">Filtering by referrer:</span>
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                    {{ referrer_filter }}
+                    <a href="{% url 'dashboard' website_id=website.id %}?range={{ selected_range }}{% if path_filter %}&path={{ path_filter|urlencode }}{% endif %}" class="ml-2 text-blue-600 hover:text-blue-800">×</a>
+                </span>
+            </div>
+        </div>
+        {% endif %}
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <h2 class="text-sm text-gray-600 mb-2">Views</h2>
@@ -63,7 +87,10 @@
                     </li>
                     {% for page in top_pages %}
                     <li class="flex justify-between items-center py-2">
-                        <span class="text-gray-600">{{ page.path }}</span>
+                        <a href="?range={{ selected_range }}{% if referrer_filter %}&referrer={{ referrer_filter|urlencode }}{% endif %}&path={{ page.path|urlencode }}" 
+                           class="text-gray-600 hover:text-blue-600 transition-colors">
+                            {{ page.path }}
+                        </a>
                         <span class="text-gray-800">{{ page.visits }}</span>
                     </li>
                     {% endfor %}
@@ -74,11 +101,14 @@
                 <ul class="divide-y divide-gray-100">
                     <li class="flex justify-between items-center py-2">
                         <span class="text-gray-600">Referrer</span>
-                        <span class="text-gray-600">Visits</span>
+                        <span class="text-gray-600">Visitors</span>
                     </li>
                     {% for ref in top_referrers %}
                     <li class="flex justify-between items-center py-2">
-                        <span class="text-gray-600">{{ ref.referrer }}</span>
+                        <a href="?range={{ selected_range }}{% if path_filter %}&path={{ path_filter|urlencode }}{% endif %}&referrer={{ ref.referrer|urlencode }}" 
+                           class="text-gray-600 hover:text-blue-600 transition-colors">
+                            {{ ref.referrer }}
+                        </a>
                         <span class="text-gray-800">{{ ref.visits }}</span>
                     </li>
                     {% endfor %}

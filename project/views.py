@@ -151,6 +151,15 @@ def dashboard(request, website_id):
         timestamp__range=(start_time, end_time)
     )
     
+    # Add path and referrer filters
+    path_filter = request.GET.get('path')
+    referrer_filter = request.GET.get('referrer')
+    
+    if path_filter:
+        base_query = base_query.filter(path=path_filter)
+    if referrer_filter:
+        base_query = base_query.filter(referrer=referrer_filter)
+    
     def get_top_metrics(column, limit=10):
         """Helper function to get top metrics for a given column"""
         return (base_query
@@ -247,6 +256,8 @@ def dashboard(request, website_id):
         'top_devices': get_top_metrics('device'),
         'top_browsers': get_top_metrics('browser'),
         'selected_range': time_range,
+        'path_filter': path_filter,
+        'referrer_filter': referrer_filter,
     }
     
     return render(request, 'dashboard.html', context)
