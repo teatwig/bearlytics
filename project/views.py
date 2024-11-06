@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.http import HttpResponse
 from django.db.models import Count
-from django.db.models.functions import TruncHour, TruncDay, Concat
+from django.db.models.functions import TruncHour, TruncDay, TruncMonth, Concat
 from django.db.models import Subquery, Min
 from .models import PageView, Website
 
@@ -184,10 +184,13 @@ def dashboard(request, website_id):
     if duration <= timedelta(hours=24):
         truncate_func = TruncHour
         date_format = '%Y-%m-%d %H:00'
-    else:
+    elif duration <= timedelta(days=90):
         truncate_func = TruncDay
         date_format = '%Y-%m-%d'
-    
+    else:
+        truncate_func = TruncMonth
+        date_format = '%Y-%m'
+
     # Get time series data
     first_occurrences = (
         base_query
@@ -223,14 +226,21 @@ def dashboard(request, website_id):
     
     total_time_series_visits = 0
     
+    # Adjust the time slot creation for monthly grouping
     while current <= end_time_slots:
         time_labels.append(current.strftime(date_format))
         views_data.append(0)
         visits_data.append(0)
         if duration <= timedelta(hours=24):
             current += timedelta(hours=1)
-        else:
+        elif duration <= timedelta(days=90):
             current += timedelta(days=1)
+        else:
+            # Add one month
+            if current.month == 12:
+                current = current.replace(year=current.year + 1, month=1)
+            else:
+                current = current.replace(month=current.month + 1)
     
     # Fill in actual data
     time_data_map = {

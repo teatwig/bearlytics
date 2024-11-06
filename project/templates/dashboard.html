@@ -208,11 +208,15 @@ switch(timeRange) {
         tooltipFormat = 'MMM D, YYYY';
         break;
     case '90d':
-    case '180d':
-    case '365d':
         timeUnit = 'day';
         displayFormat = 'MMM D';
         tooltipFormat = 'MMM D, YYYY';
+        break;
+    case '180d':
+    case '365d':
+        timeUnit = 'month';
+        displayFormat = 'MMM YYYY';
+        tooltipFormat = 'MMMM YYYY';
         break;
 }
 
@@ -263,7 +267,8 @@ new Chart(ctx, {
                     unit: timeUnit,
                     displayFormats: {
                         hour: 'ha',
-                        day: displayFormat
+                        day: 'MMM D',
+                        month: 'MMM YYYY'
                     }
                 },
                 grid: {
