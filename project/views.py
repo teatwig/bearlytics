@@ -11,8 +11,9 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.http import HttpResponse
 from django.db.models import Count
-from django.db.models.functions import TruncHour, TruncDay, TruncMonth, Concat
+from django.db.models.functions import RowNumber, TruncHour, TruncDay, TruncMonth, Concat
 from django.db.models import Subquery, Min
+from django.db.models import Window
 from .models import PageView, Website
 
 PIXEL = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=")
@@ -145,13 +146,13 @@ def dashboard(request, website_id):
     }
     start_time = end_time - ranges.get(time_range, ranges['24h'])
 
-    # Create base query once for reuse
+    # Optimize base query by selecting only needed fields
     base_query = PageView.objects.filter(
         website=website,
         timestamp__range=(start_time, end_time)
-    )
+    ).only('hash_id', 'path', 'referrer', 'browser', 'country', 'device', 'timestamp')
     
-    # Add path and referrer filters
+    # Add filters
     path_filter = request.GET.get('path')
     referrer_filter = request.GET.get('referrer')
     
@@ -191,14 +192,7 @@ def dashboard(request, website_id):
         truncate_func = TruncMonth
         date_format = '%Y-%m'
 
-    # Get time series data
-    first_occurrences = (
-        base_query
-        .values('hash_id', 'path')
-        .annotate(first_time=Min('timestamp'))
-        .values('hash_id', 'path', 'first_time')
-    )
-
+    # Optimized time series query using Window function instead of subquery
     time_series = (
         base_query
         .annotate(period=truncate_func('timestamp'))
@@ -207,9 +201,17 @@ def dashboard(request, website_id):
             views=Count('id'),
             visits=Count(
                 'id',
-                filter=Q(timestamp__in=Subquery(
-                    first_occurrences.values('first_time')
-                ))
+                filter=Q(
+                    id__in=Subquery(
+                        base_query.annotate(
+                            row_number=Window(
+                                expression=RowNumber(),
+                                partition_by=['hash_id', 'path'],
+                                order_by='timestamp'
+                            )
+                        ).filter(row_number=1).values('id')
+                    )
+                )
             )
         )
         .order_by('period')
@@ -233,14 +235,14 @@ def dashboard(request, website_id):
         visits_data.append(0)
         if duration <= timedelta(hours=24):
             current += timedelta(hours=1)
-        elif duration <= timedelta(days=90):
-            current += timedelta(days=1)
         else:
-            # Add one month
-            if current.month == 12:
-                current = current.replace(year=current.year + 1, month=1)
-            else:
-                current = current.replace(month=current.month + 1)
+            current += timedelta(days=1)
+        # else:
+        #     # Add one month
+        #     if current.month == 12:
+        #         current = current.replace(year=current.year + 1, month=1)
+        #     else:
+        #         current = current.replace(month=current.month + 1)
     
     # Fill in actual data
     time_data_map = {
