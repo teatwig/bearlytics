@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
-from . import views
+from project import views
 
 urlpatterns = [
     path('mothership/', admin.site.urls),
