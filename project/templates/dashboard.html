@@ -34,7 +34,9 @@
                 <button type="submit" name="range" value="365d" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">365 days</button>
             </div>
         </form>
-
+        <p>
+            Bear sightings last {{ selected_range }}
+        </p>
         {% if path_filter %}
         <div class="mb-8">
             <div class="flex items-center gap-2">
