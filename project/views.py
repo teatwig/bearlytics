@@ -103,7 +103,7 @@ def hit(request, website_id):
 
 
 def all_hits(request):
-    hits = PageView.objects.all().order_by('-timestamp')
+    hits = PageView.objects.all().order_by('-timestamp')[:100]
     return render(request, 'all_hits.html', {'hits': hits})
 
 
@@ -273,3 +273,11 @@ def dashboard(request, website_id):
     }
     
     return render(request, 'dashboard.html', context)
+
+
+def delete_website(request, website_id):
+    if request.method == 'POST':
+        website = get_object_or_404(Website, id=website_id)
+        website.delete()
+        messages.success(request, 'Website deleted successfully!')
+    return redirect('websites')
