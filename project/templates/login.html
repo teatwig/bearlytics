@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bearlytics Websites</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    
+    <div class="max-w-md mx-auto mt-8">
+        <h1 class="text-2xl text-gray-800 mb-8 text-center">ʕ•ᴥ•ʔ⌕ Bearlytics</h1>
+        <div class="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
+            <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mb-4 p-4 rounded {% if message.tags == 'error' %}bg-red-100 text-red-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                        Username
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300"
+                        id="username" type="text" name="username" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                        Password
+                    </label>
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300"
+                        id="password" type="password" name="password" required>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors w-full"
+                            type="submit">
+                        Sign In
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html> 

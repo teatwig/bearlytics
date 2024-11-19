@@ -15,6 +15,8 @@ from django.db.models.functions import RowNumber, TruncHour, TruncDay, TruncMont
 from django.db.models import Subquery, Min
 from django.db.models import Window
 from .models import PageView, Website
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 
 PIXEL = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=")
 
@@ -111,6 +113,7 @@ def generate_website_id():
     # Generate a random 7-character string using uppercase letters
     return ''.join(random.choices(string.ascii_uppercase, k=7))
 
+@login_required(login_url='login')
 def websites(request):
     if request.method == 'POST':
         website_name = request.POST.get('website_name')
@@ -130,6 +133,7 @@ def websites(request):
     return render(request, 'websites.html', {"websites": websites})
 
 
+@login_required(login_url='login')
 def dashboard(request, website_id):
     website = get_object_or_404(Website, id=website_id)
 
@@ -275,9 +279,24 @@ def dashboard(request, website_id):
     return render(request, 'dashboard.html', context)
 
 
+@login_required(login_url='login')
 def delete_website(request, website_id):
     if request.method == 'POST':
         website = get_object_or_404(Website, id=website_id)
         website.delete()
         messages.success(request, 'Website deleted successfully!')
     return redirect('websites')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return redirect('websites')
+        else:
+            messages.error(request, 'Invalid username or password.')
+    
+    return render(request, 'login.html')

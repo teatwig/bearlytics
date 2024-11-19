@@ -12,7 +12,7 @@
         
         {% if messages %}
             {% for message in messages %}
-            <div class="mb-8 p-6 rounded-lg {% if message.tags == 'success' %}bg-green-50 text-green-700{% else %}bg-red-50 text-red-700{% endif %} shadow-md">
+            <div class="mb-8 p-6 rounded {% if message.tags == 'success' %}bg-green-50 text-green-700{% else %}bg-red-50 text-red-700{% endif %} shadow-md">
                 {{ message }}
             </div>
             {% endfor %}
