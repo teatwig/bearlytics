@@ -22,8 +22,7 @@ class PageView(models.Model):
     class Meta:
         db_table = 'pageviews'
         indexes = [
-            models.Index(fields=['website', 'timestamp', 'path', 'referrer']),
-            models.Index(fields=['website', 'timestamp', 'hash_id']),
+            models.Index(fields=['website', 'timestamp']),
             models.Index(fields=['website', 'timestamp', 'country']),
             models.Index(fields=['website', 'timestamp', 'device']),
             models.Index(fields=['website', 'timestamp', 'browser']),
