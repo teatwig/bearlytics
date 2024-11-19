@@ -26,17 +26,32 @@
 
         <form id="timeRangeForm" action="{% url 'dashboard' website_id=website.id %}" method="get" class="mb-8">
             <div class="flex flex-wrap gap-2">
-                <button type="submit" name="range" value="24h" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">24 hours</button>
-                <button type="submit" name="range" value="7d" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">7 days</button>
-                <button type="submit" name="range" value="30d" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">30 days</button>
-                <button type="submit" name="range" value="90d" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">90 days</button>
-                <button type="submit" name="range" value="180d" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">180 days</button>
-                <button type="submit" name="range" value="365d" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">365 days</button>
+                <button type="submit" name="range" value="24h" 
+                    class="{% if selected_range == '24h' %}bg-blue-700 font-bold hover:bg-blue-800{% else %}bg-blue-500 font-light hover:bg-blue-600{% endif %} text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">
+                    24 hours
+                </button>
+                <button type="submit" name="range" value="7d" 
+                    class="{% if selected_range == '7d' %}bg-blue-700 font-bold hover:bg-blue-800{% else %}bg-blue-500 font-light hover:bg-blue-600{% endif %} text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">
+                    7 days
+                </button>
+                <button type="submit" name="range" value="30d" 
+                    class="{% if selected_range == '30d' %}bg-blue-700 font-bold hover:bg-blue-800{% else %}bg-blue-500 font-light hover:bg-blue-600{% endif %} text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">
+                    30 days
+                </button>
+                <button type="submit" name="range" value="90d" 
+                    class="{% if selected_range == '90d' %}bg-blue-700 font-bold hover:bg-blue-800{% else %}bg-blue-500 font-light hover:bg-blue-600{% endif %} text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">
+                    90 days
+                </button>
+                <button type="submit" name="range" value="180d" 
+                    class="{% if selected_range == '180d' %}bg-blue-700 font-bold hover:bg-blue-800{% else %}bg-blue-500 font-light hover:bg-blue-600{% endif %} text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">
+                    180 days
+                </button>
+                <button type="submit" name="range" value="365d" 
+                    class="{% if selected_range == '365d' %}bg-blue-700 font-bold hover:bg-blue-800{% else %}bg-blue-500 font-light hover:bg-blue-600{% endif %} text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 transition-colors">
+                    365 days
+                </button>
             </div>
         </form>
-        <p>
-            Bear sightings last {{ selected_range }}
-        </p>
         {% if path_filter %}
         <div class="mb-8">
             <div class="flex items-center gap-2">
@@ -83,83 +98,93 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <ul class="divide-y divide-gray-100">
-                    <li class="flex justify-between items-center py-2">
+                    <li class="flex justify-between items-center py-2 sticky top-0 bg-white">
                         <span class="text-gray-600">Path</span>
                         <span class="text-gray-600">Visits</span>
                     </li>
-                    {% for page in top_pages %}
-                    <li class="flex justify-between items-center py-2">
-                        <a href="?range={{ selected_range }}{% if referrer_filter %}&referrer={{ referrer_filter|urlencode }}{% endif %}&path={{ page.path|urlencode }}" 
-                           class="text-gray-600 hover:text-blue-600 transition-colors">
-                            {{ page.path }}
-                        </a>
-                        <span class="text-gray-800">{{ page.visits }}</span>
-                    </li>
-                    {% endfor %}
+                    <div class="h-[300px] overflow-y-auto">
+                        {% for page in top_pages %}
+                        <li class="flex justify-between items-center py-2">
+                            <a href="?range={{ selected_range }}{% if referrer_filter %}&referrer={{ referrer_filter|urlencode }}{% endif %}&path={{ page.path|urlencode }}" 
+                               class="text-gray-600 hover:text-blue-600 transition-colors">
+                                {{ page.path }}
+                            </a>
+                            <span class="text-gray-800">{{ page.visits }}</span>
+                        </li>
+                        {% endfor %}
+                    </div>
                 </ul>
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <ul class="divide-y divide-gray-100">
-                    <li class="flex justify-between items-center py-2">
+                    <li class="flex justify-between items-center py-2 sticky top-0 bg-white">
                         <span class="text-gray-600">Referrer</span>
                         <span class="text-gray-600">Visitors</span>
                     </li>
-                    {% for ref in top_referrers %}
-                    <li class="flex justify-between items-center py-2">
-                        <a href="?range={{ selected_range }}{% if path_filter %}&path={{ path_filter|urlencode }}{% endif %}&referrer={{ ref.referrer|urlencode }}" 
-                           class="text-gray-600 hover:text-blue-600 transition-colors">
-                            {{ ref.referrer }}
-                        </a>
-                        <span class="text-gray-800">{{ ref.visits }}</span>
-                    </li>
-                    {% endfor %}
+                    <div class="h-[300px] overflow-y-auto">
+                        {% for ref in top_referrers %}
+                        <li class="flex justify-between items-center py-2">
+                            <a href="?range={{ selected_range }}{% if path_filter %}&path={{ path_filter|urlencode }}{% endif %}&referrer={{ ref.referrer|urlencode }}" 
+                               class="text-gray-600 hover:text-blue-600 transition-colors">
+                                {{ ref.referrer }}
+                            </a>
+                            <span class="text-gray-800">{{ ref.visits }}</span>
+                        </li>
+                        {% endfor %}
+                    </div>
                 </ul>
             </div>
 
             <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <ul class="divide-y divide-gray-100">
-                        <li class="flex justify-between items-center py-2">
+                        <li class="flex justify-between items-center py-2 sticky top-0 bg-white">
                             <span class="text-gray-600">Country</span>
                             <span class="text-gray-600">Visitors</span>
                         </li>
-                        {% for country in top_countries %}
-                        <li class="flex justify-between items-center py-2">
-                            <span class="text-gray-600">{{ country.country }}</span>
-                            <span class="text-gray-800">{{ country.visits }}</span>
-                        </li>
-                        {% endfor %}
+                        <div class="h-[300px] overflow-y-auto">
+                            {% for country in top_countries %}
+                            <li class="flex justify-between items-center py-2">
+                                <span class="text-gray-600">{{ country.country }}</span>
+                                <span class="text-gray-800">{{ country.visits }}</span>
+                            </li>
+                            {% endfor %}
+                        </div>
                     </ul>
                 </div>
 
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <ul class="divide-y divide-gray-100">
-                        <li class="flex justify-between items-center py-2">
+                        <li class="flex justify-between items-center py-2 sticky top-0 bg-white">
                             <span class="text-gray-600">Device</span>
                             <span class="text-gray-600">Visitors</span>
                         </li>
-                        {% for device in top_devices %}
-                        <li class="flex justify-between items-center py-2">
-                            <span class="text-gray-600">{{ device.device }}</span>
-                            <span class="text-gray-800">{{ device.visits }}</span>
-                        </li>
-                        {% endfor %}
+                        <div class="h-[300px] overflow-y-auto">
+                            {% for device in top_devices %}
+                            <li class="flex justify-between items-center py-2">
+                                <span class="text-gray-600">{{ device.device }}</span>
+                                <span class="text-gray-800">{{ device.visits }}</span>
+                            </li>
+                            {% endfor %}
+                        </div>
                     </ul>
                 </div>
 
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <ul class="divide-y divide-gray-100">
-                        <li class="flex justify-between items-center py-2">
+                        <li class="flex justify-between items-center py-2 sticky top-0 bg-white">
                             <span class="text-gray-600">Browser</span>
                             <span class="text-gray-600">Visitors</span>
                         </li>
-                        {% for browser in top_browsers %}
-                        <li class="flex justify-between items-center py-2">
-                            <span class="text-gray-600">{{ browser.browser }}</span>
-                            <span class="text-gray-800">{{ browser.visits }}</span>
-                        </li>
-                        {% endfor %}
+                        <div class="h-[300px] overflow-y-auto">
+                            {% for browser in top_browsers %}
+                            <li class="flex justify-between items-center py-2">
+                                <span class="text-gray-600">{{ browser.browser }}</span>
+                                <span class="text-gray-800">{{ browser.visits }}</span>
+                            </li>
+                            {% endfor %}
+                        </div>
                     </ul>
                 </div>
             </div>
@@ -280,7 +305,12 @@ new Chart(ctx, {
                     date: {
                         zone: 'local'
                     }
-                }
+                },
+                ticks: {
+                    source: 'data',
+                    {% comment %} autoSkip: false {% endcomment %}
+                },
+                offset: true
             },
             y: {
                 beginAtZero: true,

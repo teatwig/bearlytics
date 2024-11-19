@@ -161,7 +161,7 @@ def dashboard(request, website_id):
     if referrer_filter:
         base_query = base_query.filter(referrer=referrer_filter)
     
-    def get_top_metrics(column, limit=10):
+    def get_top_metrics(column, limit=100):
         """Helper function to get top metrics for a given column"""
         return (base_query
             .values(column)
