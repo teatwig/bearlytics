@@ -17,6 +17,7 @@ from django.db.models import Window
 from .models import PageView, Website
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 
 PIXEL = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=")
 
@@ -288,6 +289,27 @@ def delete_website(request, website_id):
     return redirect('websites')
 
 def login_view(request):
+    # Check if any users exist
+    if User.objects.count() == 0:
+        # Handle registration
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            
+            if username and password:
+                # Create superuser
+                User.objects.create_superuser(username=username, password=password)
+                # Log them in
+                user = authenticate(request, username=username, password=password)
+                login(request, user)
+                messages.success(request, 'Account created successfully!')
+                return redirect('websites')
+            else:
+                messages.error(request, 'Both username and password are required.')
+        
+        return render(request, 'login.html', {'is_registration': True})
+    
+    # Normal login flow
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -299,4 +321,4 @@ def login_view(request):
         else:
             messages.error(request, 'Invalid username or password.')
     
-    return render(request, 'login.html')
+    return render(request, 'login.html', {'is_registration': False})

@@ -3,11 +3,12 @@
 - Date range picker
 - Data exporter
 - Hover based view tracking
-
+- Write README and create Github repo
 
 # Done
 
-- Authentication
+- Register account
+- Login
 - Delete website
 - Next page Path/Referrer
 - First label issue on daily/monthly graph
