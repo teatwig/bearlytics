@@ -33,7 +33,7 @@ After struggling to self-host popular open-source analytics platforms like Plaus
 Bearlytics uses a straightforward Django configuration with SQLite as the database backend. Key settings include:
 
 - **Database**: SQLite with WAL journal mode and optimized cache settings for better performance
-- **Environment Variables**:
+- **Environment Variables** (using .env in the dev environment):
   - `SECRET_KEY`: Django secret key
   - `DEBUG`: Set to False in production
   - `DB_PATH`: SQLite database location (default: /app/db/db.sqlite3)
@@ -47,11 +47,11 @@ The SQLite database is configured with performance optimizations:
 
 ## Self-hosting Guide
 
-This is a basic Django app that can be deployed to any platform that supports Django. I've chosen Dokku because it's easy to set up and manage, and because I'm familiar with it.
+This is a basic Django app that can be deployed to any platform that supports Django. I've chosen Dokku here because it's easy to set up and manage, and I'm familiar with it.
 
 ### Prerequisites
 
-- A Dokku server (or the willingness to set one up)
+- A Dokku server
 - Basic knowledge of terminal commands
 - A cup of coffee
 
@@ -91,6 +91,7 @@ git push dokku main
 
 ## Tracking Script
 
+```html
 <script async defer src="https://your-analytics-domain.com/tracker.js" data-website-id="your-website-id"></script>
 
 ## FAQ
@@ -102,7 +103,7 @@ A: For tracking your cat blog? Probably. For enterprise-level analytics needs? I
 A: No, but it will tell you how many people read your blog post about getting rich and famous.
 
 **Q: Is it production-ready?**  
-A: I've been running it in production on my [personal blog](https://herman.bearblog.dev), and [JustSketchMe](https://justsketch.me) since November 2024. So far, nothing has exploded.
+A: I've been running it in production on my [personal blog](https://herman.bearblog.dev) (~50,000 page views/month), and [JustSketchMe](https://justsketch.me) (~150,000 page views/month) since November 2024. So far, nothing has exploded.
 
 ## License
 
@@ -119,10 +120,10 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 ## Acknowledgments
 
 - Coffee ☕
-- The internet 🌐
-- That one Stack Overflow answer that saved my life 🙏
-- SQLite (you're doing great!)
+- That one Stack Overflow answer that saved my life (you know who you are) 🙏
+- SQLite (you're doing great!) 👌
+- Emma (thanks) ❤️
 
 ---
 
-Made with ❤️ and probably too much caffeine by [Herman](https://herman.bearblog.dev)
+Made with ❤️ and probably too much caffeine by [Herman Martinus](https://herman.bearblog.dev)
