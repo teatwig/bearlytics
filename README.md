@@ -115,7 +115,16 @@ A: No, but you could add one if you want.
 A: Yes, but you can't offer it as a service to your customers.
 
 **Q: How is user privacy protected?**  
-A: User privacy is protected by not storing any personal identifiable information (PII). The IP address is hashed alongside the user-agent, and the current date with SHA-256 using a salt string that is stored in the environment variables. Can this be reversed? Yes, but it would require either a lookup list of all IP addresses and user-agents and dates with the salt, along with their corresponding hashes, or a computer the size of a small moon.
+A: User privacy is protected by not storing any personal identifiable information (PII). The IP address is hashed alongside the user-agent, and the current date with SHA-256 using a salt string that is stored in the environment variables. Can this be reversed? Yes, but it would require a lookup table of all IP addresses and user-agents and dates with the salt, along with their corresponding hashes, and a computer the size of a small moon.
+
+> The lookup table would need approximately 11,400 TB (or about 11.4 petabytes) of storage
+> This assumes:
+> - All possible IPv4 addresses (4.3 billion)
+> - 250 common user agent combinations (5 browsers × 5 OS × 10 versions)
+> - 365 days of dates
+> - 32 bytes per SHA-256 hash
+> Time to Generate:
+> Even at a rate of 1 million hashes per second, it would take about 12.4 years to generate the complete table
 
 **Q: What about back-ups/data exporting?**  
 A: The database is stored in a SQLite database file on your server. You can back it up any way you want. I personally use a cron job to back it up to an S3 bucket every 24 hours.
