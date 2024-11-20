@@ -126,4 +126,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ---
 
-Made with ❤️ and probably too much caffeine by [Herman Martinus](https://herman.bearblog.dev)
+Made with love and probably too much caffeine by [Herman Martinus](https://herman.bearblog.dev)
