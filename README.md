@@ -4,7 +4,7 @@ Privacy-first, no-nonsense web analytics.
 
 ## What is this?
 
-Bearlytics is exactly what it says on the tin - a straightforward web analytics tool that helps you understand your website traffic without selling your soul to the tracking gods. No cookies, no personal data collection, just the basics:
+Bearlytics is exactly what it says on the tin - a straightforward web analytics tool that helps you understand your website traffic without selling your soul to the tracking gods. No cookies, no PII problems, just the basics:
 
 - Page views
 - Referrers
@@ -21,7 +21,7 @@ After struggling to self-host popular open-source analytics platforms like Plaus
 ![Screenshot](screenshot.png)
 ## Features
 
-- 🔒 Privacy-focused: No cookies, no personal data collection
+- 🔒 Privacy-focused: No cookies, no personal identifiable information
 - 🚀 As many websites as your server can handle
 - 📊 Clean, intuitive dashboard
 - 🔍 Filter by date range, page path, and referrer
@@ -109,7 +109,7 @@ A: For tracking your cat blog? Probably. For enterprise-level analytics needs? I
 A: No, but it will tell you how many people read your blog post about getting rich and famous.
 
 **Q: Do I need a cookie consent banner?**  
-A: No, but you could add one if you want.
+A: No, but you can add one if you want.
 
 **Q: Can I use this for my business?**  
 A: Yes, but you can't offer it as a service to your customers.
