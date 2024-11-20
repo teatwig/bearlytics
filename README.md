@@ -114,13 +114,13 @@ A: No, but you could add one if you want.
 **Q: Can I use this for my business?**  
 A: Yes, but you can't offer it as a service to your customers.
 
-**Q: How is user privacy protected?**
+**Q: How is user privacy protected?**  
 A: User privacy is protected by not storing any personal identifiable information (PII). The IP address is hashed alongside the user-agent, and the current date with SHA-256 using a salt string that is stored in the environment variables. Can this be reversed? Yes, but it would require either a lookup list of all IP addresses and user-agents and dates with the salt, along with their corresponding hashes, or a computer the size of a small moon.
 
-**Q: What about back-ups/data exporting?**
+**Q: What about back-ups/data exporting?**  
 A: The database is stored in a SQLite database file on your server. You can back it up any way you want. I personally use a cron job to back it up to an S3 bucket every 24 hours.
 
-**Q: Can I pay you to host my analytics?**
+**Q: Can I pay you to host my analytics?**  
 A: Let me know if this is something you're interested in, by commenting or adding an emoji to [this issue](https://github.com/HermanMartinus/bearlytics/issues/1), and I'll add it to the roadmap.
 
 ## License
