@@ -93,6 +93,7 @@ git push dokku main
 
 ```html
 <script async defer src="https://your-analytics-domain.com/tracker.js" data-website-id="your-website-id"></script>
+```
 
 ## FAQ
 
