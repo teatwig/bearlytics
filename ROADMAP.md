@@ -1,9 +1,13 @@
+# IDEAS
+
+- Share page publically
+
 # TODO
 
+- On-hover based view tracking
 - Date range picker
-- Hover based view tracking
 
-# Done
+# COMPLETED
 
 - Write README and create Github repo
 - Register account

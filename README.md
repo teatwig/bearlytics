@@ -130,7 +130,7 @@ A: User privacy is protected by not storing any personal identifiable informatio
 A: The database is stored in a SQLite database file on your server. You can back it up any way you want. I personally use a cron job to back it up to an S3 bucket every 24 hours.
 
 **Q: Can I pay you to host my analytics?**  
-A: Let me know if this is something you're interested in, by commenting or adding an emoji to [this issue](https://github.com/HermanMartinus/bearlytics/issues/1), and I'll add it to the roadmap.
+A: Let me know if this is something you're interested in, by commenting or adding an emoji to [this issue](https://github.com/HermanMartinus/bearlytics/issues/1), and I'll add it to [the roadmap](ROADMAP.md).
 
 ## License
 
@@ -142,7 +142,7 @@ For the full license text, see [LICENSE](LICENSE.md)
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Pull requests are welcome. To be certain we're on the same page, please open an issue first to discuss what you would like to change.
 
 ## Acknowledgments
 

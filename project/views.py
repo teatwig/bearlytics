@@ -78,7 +78,7 @@ def hit(request, website_id):
     data = f"{ip}|{ua_string}|{date}|{SALT_SECRET}"
     hash_id = hashlib.sha256(data.encode()).hexdigest()
 
-    # Get path, ref, and project from query parameter
+    # Get path, and ref from query parameter
     path = request.GET.get('path', '/')
     if not path.startswith('/'):
         path = '/' + path
@@ -287,6 +287,7 @@ def delete_website(request, website_id):
         website.delete()
         messages.success(request, 'Website deleted successfully!')
     return redirect('websites')
+
 
 def login_view(request):
     # Check if any users exist
