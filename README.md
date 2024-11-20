@@ -115,7 +115,7 @@ A: No, but you could add one if you want.
 A: Yes, but you can't offer it as a service to your customers.
 
 **Q: How is user privacy protected?**  
-A: User privacy is protected by not storing any personal identifiable information (PII). The IP address is hashed alongside the user-agent, and the current date with SHA-256 using a salt string that is stored in the environment variables. Can this be reversed? Yes, but it would require a lookup table of all IP addresses and user-agents and dates with the salt, along with their corresponding hashes, and a computer the size of a small moon.
+A: User privacy is protected by not storing any personal identifiable information (PII). The IP address is hashed alongside the user-agent, and the current date with SHA-256 using a salt string that is stored in the environment variables. Can this be reversed? Yes, but it would require a lookup table of all possible IP addresses, user-agents and dates, along with their corresponding salted hashes, and a computer the size of a small moon.
 
 > The lookup table would need approximately 11,400 TB (or about 11.4 petabytes) of storage  
 > This assumes:
@@ -124,13 +124,13 @@ A: User privacy is protected by not storing any personal identifiable informatio
 > - 365 days of dates
 > - 32 bytes per SHA-256 hash  
 > Time to Generate:  
-> Even at a rate of 1 million hashes per second, it would take about 12.4 years to generate the complete table, and all so you can get a rough idea of which IP address visited your site.
+> Even at a rate of 1 million hashes per second, it would take about 12.4 years to generate the complete table (and then you'd have to query it). All so you can get a rough idea of which IP address visited your site.
 
 **Q: What about back-ups/data exporting?**  
 A: The database is stored in a SQLite database file on your server. You can back it up any way you want. I personally use a cron job to back it up to an S3 bucket every 24 hours.
 
 **Q: Can I pay you to host my analytics?**  
-A: Let me know if this is something you're interested in by commenting or reacting to [this issue](https://github.com/HermanMartinus/bearlytics/issues/1), and I'll add it to [the roadmap](ROADMAP.md).
+A: No, but if it's something you're interested in, let me know by commenting on [this issue](https://github.com/HermanMartinus/bearlytics/issues/1), and I may add it to [the roadmap](ROADMAP.md).
 
 ## License
 
