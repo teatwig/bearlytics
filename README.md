@@ -122,15 +122,15 @@ A: User privacy is protected by not storing any personal identifiable informatio
 > - All possible IPv4 addresses (4.3 billion)
 > - 250 common user agent combinations (5 browsers × 5 OS × 10 versions)
 > - 365 days of dates
-> - 32 bytes per SHA-256 hash
-> Time to Generate:
+> - 32 bytes per SHA-256 hash  
+> Time to Generate:  
 > Even at a rate of 1 million hashes per second, it would take about 12.4 years to generate the complete table, and all so you can get a rough idea of which IP address visited your site.
 
 **Q: What about back-ups/data exporting?**  
 A: The database is stored in a SQLite database file on your server. You can back it up any way you want. I personally use a cron job to back it up to an S3 bucket every 24 hours.
 
 **Q: Can I pay you to host my analytics?**  
-A: Let me know if this is something you're interested in, by commenting or adding an emoji to [this issue](https://github.com/HermanMartinus/bearlytics/issues/1), and I'll add it to [the roadmap](ROADMAP.md).
+A: Let me know if this is something you're interested in by commenting or reacting to [this issue](https://github.com/HermanMartinus/bearlytics/issues/1), and I'll add it to [the roadmap](ROADMAP.md).
 
 ## License
 
