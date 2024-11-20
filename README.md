@@ -1,6 +1,6 @@
 # ʕ•ᴥ•ʔ⌕ Bearlytics
 
-A privacy-first, no-nonsense web analytics platform.
+Privacy-first, no-nonsense web analytics.
 
 ## What is this?
 
@@ -35,6 +35,7 @@ Bearlytics uses a straightforward Django configuration with SQLite as the databa
 - **Database**: SQLite with WAL journal mode and optimized cache settings for better performance
 - **Environment Variables** (using .env in the dev environment):
   - `SECRET_KEY`: Django secret key
+  - `SALT_SECRET`: Secret key used to hash PII
   - `DEBUG`: Set to False in production
   - `DB_PATH`: SQLite database location (default: /app/db/db.sqlite3)
   - `ALLOWED_HOSTS`: Comma-separated list of allowed hosts
@@ -69,6 +70,7 @@ dokku storage:mount analytics /var/lib/dokku/data/storage/analytics:/app/data
 dokku config:set analytics SECRET_KEY=your_very_secret_key_here
 dokku config:set analytics DB_PATH=/app/data/analytics.db
 dokku config:set DISABLE_COLLECTSTATIC=1
+dokku config:set SALT_SECRET=your_very_secret_salt_here
 dokku config:set DEBUG=False
 ```
 
@@ -105,6 +107,15 @@ A: No, but it will tell you how many people read your blog post about getting ri
 
 **Q: Is it production-ready?**  
 A: I've been running it in production on my [personal blog](https://herman.bearblog.dev) (~50,000 page views/month), and [JustSketchMe](https://justsketch.me) (~150,000 page views/month) since November 2024. So far, nothing has exploded.
+
+**Q: Do I need a cookie consent banner?**  
+A: No, but you could add one if you want.
+
+**Q: Can I use this for my business?**  
+A: Yes, but you can't offer it as a service to your customers.
+
+**Q: How is user privacy protected?**
+A: User privacy is protected by not storing any personal identifiable information (PII). The IP address is hashed alongside the user-agent, and the current date with SHA-256 using a salt string that is stored in the environment variables. Can this be reversed? Yes, but it would require either a lookup list of all IP addresses and user-agents and dates with the salt, along with their corresponding hashes, or a computer the size of a small moon.
 
 ## License
 
