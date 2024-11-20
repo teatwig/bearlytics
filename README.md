@@ -117,7 +117,7 @@ A: Yes, but you can't offer it as a service to your customers.
 **Q: How is user privacy protected?**  
 A: User privacy is protected by not storing any personal identifiable information (PII). The IP address is hashed alongside the user-agent, and the current date with SHA-256 using a salt string that is stored in the environment variables. Can this be reversed? Yes, but it would require a lookup table of all IP addresses and user-agents and dates with the salt, along with their corresponding hashes, and a computer the size of a small moon.
 
-> The lookup table would need approximately 11,400 TB (or about 11.4 petabytes) of storage
+> The lookup table would need approximately 11,400 TB (or about 11.4 petabytes) of storage  
 > This assumes:
 > - All possible IPv4 addresses (4.3 billion)
 > - 250 common user agent combinations (5 browsers × 5 OS × 10 versions)

@@ -1,28 +1,27 @@
-from datetime import timedelta
 import os
 import random
 import string
-from django.utils import timezone
-from django.db.models import Q
 import hashlib
 import base64
+from datetime import timedelta
 import user_agents
+
+from django.utils import timezone
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.http import HttpResponse
 from django.db.models import Count
 from django.db.models.functions import RowNumber, TruncHour, TruncDay, TruncMonth, Concat
-from django.db.models import Subquery, Min
+from django.db.models import Subquery
 from django.db.models import Window
-from .models import PageView, Website
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 
+from .models import PageView, Website
+
 PIXEL = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=")
-
-
-SALT_SECRET = os.getenv("SALT_SECRET")
     
 
 def extract_basic_language(lang_header):
@@ -75,7 +74,7 @@ def hit(request, website_id):
 
     # Generate ID using IP, User Agent, current date, and secret
     date = timezone.now().strftime('%Y-%m-%d')
-    data = f"{ip}|{ua_string}|{date}|{SALT_SECRET}"
+    data = f"{ip}|{ua_string}|{date}|{os.getenv("SALT_SECRET")}"
     hash_id = hashlib.sha256(data.encode()).hexdigest()
 
     # Get path, and ref from query parameter
@@ -113,6 +112,7 @@ def all_hits(request):
 def generate_website_id():
     # Generate a random 7-character string using uppercase letters
     return ''.join(random.choices(string.ascii_uppercase, k=7))
+
 
 @login_required(login_url='login')
 def websites(request):
