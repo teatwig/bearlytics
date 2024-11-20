@@ -1,12 +1,11 @@
 # TODO
 
 - Date range picker
-- Data exporter
 - Hover based view tracking
-- Write README and create Github repo
 
 # Done
 
+- Write README and create Github repo
 - Register account
 - Login
 - Delete website

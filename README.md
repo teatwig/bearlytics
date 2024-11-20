@@ -94,7 +94,7 @@ git push dokku main
 ## Tracking Script
 
 ```html
-<script async defer src="https://your-analytics-domain.com/tracker.js" data-website-id="your-website-id"></script>
+<script async defer src="https://your-analytics-domain.com/script.js" data-website-id="your-website-id"></script>
 ```
 
 ## FAQ
@@ -103,7 +103,7 @@ git push dokku main
 A: I've been running it in production on my [personal blog](https://herman.bearblog.dev) (~50,000 page views/month), and [JustSketchMe](https://justsketch.me) (~150,000 page views/month) since November 2024. So far, nothing has exploded.
 
 **Q: Is this better than Google Analytics?**  
-A: For tracking your cat blog? Probably. For enterprise-level analytics needs? I'd recommend something more robust like [Fathom](https://usefathom.com/ref/GMAGWL).
+A: For tracking your cat blog? Probably. For enterprise-level analytics needs? I'd recommend something more robust, like [Fathom](https://usefathom.com/ref/GMAGWL).
 
 **Q: Will this make me rich and famous?**  
 A: No, but it will tell you how many people read your blog post about getting rich and famous.
@@ -117,11 +117,17 @@ A: Yes, but you can't offer it as a service to your customers.
 **Q: How is user privacy protected?**
 A: User privacy is protected by not storing any personal identifiable information (PII). The IP address is hashed alongside the user-agent, and the current date with SHA-256 using a salt string that is stored in the environment variables. Can this be reversed? Yes, but it would require either a lookup list of all IP addresses and user-agents and dates with the salt, along with their corresponding hashes, or a computer the size of a small moon.
 
+**Q: What about back-ups/data exporting?**
+A: The database is stored in a SQLite database file on your server. You can back it up any way you want. I personally use a cron job to back it up to an S3 bucket every 24 hours.
+
+**Q: Can I pay you to host my analytics?**
+A: Let me know if this is something you're interested in, by commenting or adding an emoji to [this issue](https://github.com/HermanMartinus/bearlytics/issues/1), and I'll add it to the roadmap.
+
 ## License
 
 AGPL-3.0 - This license ensures that:
 - You can self-host and modify Bearlytics for your own use, no strings attached
-- Commercial hosting of Bearlytics as a service is restricted to the original copyright holder (me)
+- Commercial hosting of Bearlytics as a service is restricted to the original copyright holder
 
 For the full license text, see [LICENSE](LICENSE.md)
 
