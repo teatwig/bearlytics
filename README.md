@@ -30,7 +30,7 @@ After struggling to self-host popular open-source analytics platforms like Plaus
 
 ### Configuration
 
-Bearlytics uses a straightforward Django configuration with SQLite as the database backend. Key settings include:
+Bearlytics uses a straightforward Django configuration with SQLite as the database. Key settings include:
 
 - **Database**: SQLite with WAL journal mode and optimized cache settings for better performance
 - **Environment Variables** (using .env in the dev environment):
@@ -48,7 +48,7 @@ The SQLite database is configured with performance optimizations:
 
 ## Self-hosting Guide
 
-This is a basic Django app that can be deployed to any platform that supports Django. I've chosen Dokku here because it's easy to set up and manage, and I'm familiar with it.
+This is a basic Django app that can be deployed to any platform that supports Django. I've chosen Dokku for this guide because it's easy to set up and manage, and I'm familiar with it.
 
 ### Prerequisites
 
@@ -99,14 +99,14 @@ git push dokku main
 
 ## FAQ
 
+**Q: Is it production-ready?**  
+A: I've been running it in production on my [personal blog](https://herman.bearblog.dev) (~50,000 page views/month), and [JustSketchMe](https://justsketch.me) (~150,000 page views/month) since November 2024. So far, nothing has exploded.
+
 **Q: Is this better than Google Analytics?**  
 A: For tracking your cat blog? Probably. For enterprise-level analytics needs? I'd recommend something more robust like [Fathom](https://usefathom.com/ref/GMAGWL).
 
 **Q: Will this make me rich and famous?**  
 A: No, but it will tell you how many people read your blog post about getting rich and famous.
-
-**Q: Is it production-ready?**  
-A: I've been running it in production on my [personal blog](https://herman.bearblog.dev) (~50,000 page views/month), and [JustSketchMe](https://justsketch.me) (~150,000 page views/month) since November 2024. So far, nothing has exploded.
 
 **Q: Do I need a cookie consent banner?**  
 A: No, but you could add one if you want.
