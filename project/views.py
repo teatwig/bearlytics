@@ -22,6 +22,9 @@ from django.contrib.auth.models import User
 from .models import PageView, Website
 
 PIXEL = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=")
+
+
+SALT_SECRET = os.getenv("SALT_SECRET")
     
 
 def extract_basic_language(lang_header):
@@ -74,7 +77,7 @@ def hit(request, website_id):
 
     # Generate ID using IP, User Agent, current date, and secret
     date = timezone.now().strftime('%Y-%m-%d')
-    data = f"{ip}|{ua_string}|{date}|{os.getenv("SALT_SECRET")}"
+    data = f"{ip}|{ua_string}|{date}|{SALT_SECRET}"
     hash_id = hashlib.sha256(data.encode()).hexdigest()
 
     # Get path, and ref from query parameter

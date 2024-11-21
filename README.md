@@ -46,6 +46,41 @@ The SQLite database is configured with performance optimizations:
 - Write-Ahead Logging (WAL) journal mode
 - Normal synchronization mode
 
+## FAQ
+
+**Q: Is it production-ready?**  
+A: I've been running it in production on my [personal blog](https://herman.bearblog.dev) (~50,000 page views/month), and [JustSketchMe](https://justsketch.me) (~150,000 page views/month) since November 2024. So far, nothing has exploded.
+
+**Q: Is this better than Google Analytics?**  
+A: For tracking your cat blog? Probably. For enterprise-level analytics needs? I'd recommend something more robust, like [Fathom](https://usefathom.com/ref/GMAGWL).
+
+**Q: Will this make me rich and famous?**  
+A: No, but it will tell you how many people read your blog post about getting rich and famous.
+
+**Q: Do I need a cookie consent banner?**  
+A: No, but you can add one if you want.
+
+**Q: Can I use this for my business?**  
+A: Yes, but you can't offer it as a service to your customers.
+
+**Q: How is user privacy protected?**  
+A: User privacy is protected by not storing any personal identifiable information (PII). The IP address is hashed alongside the user-agent, and the current date with SHA-256 using a salt string that is stored in the environment variables. Can this be reversed? Yes, but it would require a lookup table of all possible IP addresses, user-agents and dates, along with their corresponding salted hashes, and a computer the size of a small moon.
+
+> The lookup table would need approximately 11,400 TB (or about 11.4 petabytes) of storage  
+> This assumes:
+> - All possible IPv4 addresses (4.3 billion)
+> - 250 common user agent combinations (5 browsers × 5 OS × 10 versions)
+> - 365 days of dates
+> - 32 bytes per SHA-256 hash  
+> Time to Generate:  
+> Even at a rate of 1 million hashes per second, it would take about 12.4 years to generate the complete table (and then you'd have to query it). All so you can get a rough idea of which IP address visited your site.
+
+**Q: What about back-ups/data exporting?**  
+A: The database is stored in a SQLite database file on your server. You can back it up any way you want. I personally use a cron job to back it up to an S3 bucket every 24 hours.
+
+**Q: Can I pay you to host my analytics?**  
+A: No, but if it's something you're interested in, let me know by commenting on [this issue](https://github.com/HermanMartinus/bearlytics/issues/1), and I may add it to [the roadmap](ROADMAP.md).
+
 ## Self-hosting Guide
 
 This is a basic Django app that can be deployed to any platform that supports Django. I've chosen Dokku for this guide because it's easy to set up and manage, and I'm familiar with it.
@@ -96,41 +131,6 @@ git push dokku main
 ```html
 <script async defer src="https://your-analytics-domain.com/script.js" data-website-id="your-website-id"></script>
 ```
-
-## FAQ
-
-**Q: Is it production-ready?**  
-A: I've been running it in production on my [personal blog](https://herman.bearblog.dev) (~50,000 page views/month), and [JustSketchMe](https://justsketch.me) (~150,000 page views/month) since November 2024. So far, nothing has exploded.
-
-**Q: Is this better than Google Analytics?**  
-A: For tracking your cat blog? Probably. For enterprise-level analytics needs? I'd recommend something more robust, like [Fathom](https://usefathom.com/ref/GMAGWL).
-
-**Q: Will this make me rich and famous?**  
-A: No, but it will tell you how many people read your blog post about getting rich and famous.
-
-**Q: Do I need a cookie consent banner?**  
-A: No, but you can add one if you want.
-
-**Q: Can I use this for my business?**  
-A: Yes, but you can't offer it as a service to your customers.
-
-**Q: How is user privacy protected?**  
-A: User privacy is protected by not storing any personal identifiable information (PII). The IP address is hashed alongside the user-agent, and the current date with SHA-256 using a salt string that is stored in the environment variables. Can this be reversed? Yes, but it would require a lookup table of all possible IP addresses, user-agents and dates, along with their corresponding salted hashes, and a computer the size of a small moon.
-
-> The lookup table would need approximately 11,400 TB (or about 11.4 petabytes) of storage  
-> This assumes:
-> - All possible IPv4 addresses (4.3 billion)
-> - 250 common user agent combinations (5 browsers × 5 OS × 10 versions)
-> - 365 days of dates
-> - 32 bytes per SHA-256 hash  
-> Time to Generate:  
-> Even at a rate of 1 million hashes per second, it would take about 12.4 years to generate the complete table (and then you'd have to query it). All so you can get a rough idea of which IP address visited your site.
-
-**Q: What about back-ups/data exporting?**  
-A: The database is stored in a SQLite database file on your server. You can back it up any way you want. I personally use a cron job to back it up to an S3 bucket every 24 hours.
-
-**Q: Can I pay you to host my analytics?**  
-A: No, but if it's something you're interested in, let me know by commenting on [this issue](https://github.com/HermanMartinus/bearlytics/issues/1), and I may add it to [the roadmap](ROADMAP.md).
 
 ## License
 
