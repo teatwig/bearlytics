@@ -1,30 +1,46 @@
-# Bearlytics License
+# Dual License
+
+This software is available under a dual license model:
+
+## Personal Use License (MIT License)
 
 Copyright (c) 2024 Herman Martinus
 
-This software is licensed under a modified version of the GNU Affero General Public License version 3 (AGPL-3.0) with additional restrictions.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software for non-resale purposes, including without limitation the rights to use, copy, modify, merge, publish, and distribute copies of the Software, subject to the following conditions:
 
-## Permissions
-- ✓ Private use
-- ✓ Self-hosting
-- ✓ Modification
-- ✓ Distribution
-- ✓ Patent use
+1. The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-## Conditions
-- You must disclose the source code of any modified versions
-- You must state significant changes made to the software
-- You must preserve copyright and license notices
-- You must use the same license for any modifications
+2. Use of the Software under this license must be for non-resale purposes only. This includes:
+   - Individual developers using the software
+   - Businesses using the software
+   - Educational institutions using the software for teaching and research
+   - Non-profit organizations using the software for non-commercial purposes
+   - Open source projects 
 
-## Restrictions
-- Commercial hosting of this software as a service is exclusively reserved for the original copyright holder
-- You may not offer this software as a hosted service to third parties
-- You may not sublicense or relicense this software
+3. This license explicitly prohibits:
+   - Reselling the Software
+   - Offering the Software as a service
+   - Including the Software in a commercial product
+   - Using the Software to provide commercial services
 
-## Additional Terms
-This software is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-For the complete AGPL-3.0 license text, please visit: https://www.gnu.org/licenses/agpl-3.0.en.html
+## Commercial License
 
-The additional restrictions regarding commercial hosting take precedence over any conflicting terms in the AGPL-3.0 license.
+For commercial use, including but not limited to:
+- Reselling the Software
+- Offering the Software as a service
+- Including the Software in commercial products
+- Using the Software to provide commercial services
+
+# License Selection
+
+1. If you are using the Software yourself, or for your business, you may proceed under the MIT License terms above.
+
+2. If you are reselling or selling access to the Software, you must obtain a commercial license by contacting [herman@bearblog.dev](mailto:herman@bearblog.dev).
+
+3. If you are unsure which license applies to your use case, please contact [herman@bearblog.dev](mailto:herman@bearblog.dev) for clarification.
+
+# Note on License Enforcement
+
+The copyright holder reserves the right to enforce these license terms and to audit compliance with these terms. Any use of the Software in violation of these license terms will automatically terminate your rights under either license.

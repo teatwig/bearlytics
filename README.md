@@ -61,7 +61,7 @@ A: No, but it will tell you how many people read your blog post about getting ri
 A: No, but you can add one if you want.
 
 **Q: Can I use this for my business?**  
-A: Yes, but you can't offer it as a service to your customers.
+A: Yes, but if you want to offer it as a service to your customers, check out the [full license](LICENSE.md).
 
 **Q: How is user privacy protected?**  
 A: User privacy is protected by not storing any personal identifiable information (PII). The IP address is hashed alongside the user-agent, and the current date with SHA-256 using a salt string that is stored in the environment variables. Can this be reversed? Yes, but it would require a lookup table of all possible IP addresses, user-agents and dates, along with their corresponding salted hashes, and a computer the size of a small moon.
@@ -134,9 +134,9 @@ git push dokku main
 
 ## License
 
-AGPL-3.0 - This license ensures that:
+I'm still figuring out the best license model for Bearlytics. For now, here's the plan:
 - You can self-host and modify Bearlytics for your own use, no strings attached
-- Commercial hosting of Bearlytics as a service is restricted to the original copyright holder
+- Commercial hosting or re-selling of Bearlytics requires a commercial license ([email me](mailto:herman@bearblog.dev))
 
 For the full license text, see [LICENSE](LICENSE.md)
 

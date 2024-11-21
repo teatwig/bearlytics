@@ -1,9 +1,10 @@
 # IDEAS
 
-- Share page publically
+- Share page publicly
 
 # TODO
 
+- Figure out license model
 - On-hover based view tracking
 - Date range picker
 
