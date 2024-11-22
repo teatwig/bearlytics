@@ -1,0 +1,6 @@
+# Set all static files to be linguist-vendored
+staticfiles/* linguist-vendored
+*/staticfiles/* linguist-vendored
+
+# Explicitly mark Python files as Python
+*.py linguist-language=Python
