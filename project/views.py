@@ -21,17 +21,10 @@ from django.contrib.auth.models import User
 
 from .models import PageView, Website
 
+
 PIXEL = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=")
 
-
 SALT_SECRET = os.getenv("SALT_SECRET")
-    
-
-def extract_basic_language(lang_header):
-    if not lang_header:
-        return "unknown"
-    lang_parts = lang_header.split(',')
-    return lang_parts[0].split('-')[0]
 
 
 def hit(request, website_id):
@@ -107,14 +100,11 @@ def hit(request, website_id):
     return response
 
 
-def all_hits(request):
-    hits = PageView.objects.all().order_by('-timestamp')[:100]
-    return render(request, 'all_hits.html', {'hits': hits})
-
-
-def generate_website_id():
-    # Generate a random 7-character string using uppercase letters
-    return ''.join(random.choices(string.ascii_uppercase, k=7))
+def extract_basic_language(lang_header):
+    if not lang_header:
+        return "unknown"
+    lang_parts = lang_header.split(',')
+    return lang_parts[0].split('-')[0]
 
 
 @login_required(login_url='login')
@@ -281,6 +271,15 @@ def dashboard(request, website_id):
     }
     
     return render(request, 'dashboard.html', context)
+
+
+def generate_website_id():
+    # Generate a random 7-character string using uppercase letters
+    return ''.join(random.choices(string.ascii_uppercase, k=7))
+
+def all_hits(request):
+    hits = PageView.objects.all().order_by('-timestamp')[:100]
+    return render(request, 'all_hits.html', {'hits': hits})
 
 
 @login_required(login_url='login')

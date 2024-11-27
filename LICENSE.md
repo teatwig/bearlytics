@@ -13,15 +13,14 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 2. Use of the Software under this license must be for non-resale purposes only. This includes:
    - Individual developers using the software
    - Businesses using the software
-   - Educational institutions using the software for teaching and research
-   - Non-profit organizations using the software for non-commercial purposes
+   - Educational institutions
+   - Non-profit organization
    - Open source projects 
 
 3. This license explicitly prohibits:
    - Reselling the Software
    - Offering the Software as a service
    - Including the Software in a commercial product
-   - Using the Software to provide commercial services
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
@@ -31,7 +30,6 @@ For commercial use, including but not limited to:
 - Reselling the Software
 - Offering the Software as a service
 - Including the Software in commercial products
-- Using the Software to provide commercial services
 
 # License Selection
 

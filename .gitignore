@@ -96,6 +96,7 @@ myvenv/
 ENV/
 env.bak/
 venv.bak/
+.cursorignore
 
 # Spyder project settings
 .spyderproject
@@ -110,8 +111,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 .jsbeautifyrc
-
-# Testing tools
-fixture.json
-sync_data.sh
 
