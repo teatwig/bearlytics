@@ -1,6 +1,4 @@
-# Bearlytics
-
-<img src="static/logo.png" width="50" alt="Bearlytics">
+# Bearlytics <img src="static/logo.png" width="50" alt="Bearlytics"> 
 
 Privacy-first, no-nonsense web analytics.
 
