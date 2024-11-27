@@ -1,4 +1,6 @@
-# ʕ•ᴥ•ʔ⌕ Bearlytics
+# Bearlytics
+
+![Bearlytics](static/logo.png)
 
 Privacy-first, no-nonsense web analytics.
 

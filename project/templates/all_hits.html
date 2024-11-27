@@ -11,33 +11,31 @@
 {% endblock %}
 
 {% block content %}
-<body>
-    <h1>All Page Hits</h1>
-    <table>
-        <tr>
-            <th>Project</th>
-            <th>Hash_ID</th>
-            <th>Path</th>
-            <th>Referrer</th>
-            <th>Device</th>
-            <th>Browser</th>
-            <th>Country</th>
-            <th>Language</th>
-            <th>Timestamp</th>
-        </tr>
-        {% for hit in hits %}
-        <tr>
-            <td>{{ hit.website.name }}</td>
-            <td>{{ hit.hash_id }}</td>
-            <td>{{ hit.path }}</td>
-            <td>{{ hit.referrer }}</td>
-            <td>{{ hit.device }}</td>
-            <td>{{ hit.browser }}</td>
-            <td>{{ hit.country }}</td>
-            <td>{{ hit.language }}</td>
-            <td>{{ hit.timestamp|date:"Y-m-d H:i:s" }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-</body>
+<h1>All Page Hits</h1>
+<table>
+    <tr>
+        <th>Project</th>
+        <th>Hash_ID</th>
+        <th>Path</th>
+        <th>Referrer</th>
+        <th>Device</th>
+        <th>Browser</th>
+        <th>Country</th>
+        <th>Language</th>
+        <th>Timestamp</th>
+    </tr>
+    {% for hit in hits %}
+    <tr>
+        <td>{{ hit.website.name }}</td>
+        <td>{{ hit.hash_id }}</td>
+        <td>{{ hit.path }}</td>
+        <td>{{ hit.referrer }}</td>
+        <td>{{ hit.device }}</td>
+        <td>{{ hit.browser }}</td>
+        <td>{{ hit.country }}</td>
+        <td>{{ hit.language }}</td>
+        <td>{{ hit.timestamp|date:"Y-m-d H:i:s" }}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
