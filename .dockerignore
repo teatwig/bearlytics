@@ -1,0 +1,10 @@
+analytics
+Makefile
+Procfile
+README.md
+ROADMAP.md
+screenshot.png
+.gitattributes
+.gitignore
+.dockerignore
+.env
