@@ -9,3 +9,4 @@ usermod -o -u "$UID" $USER
 chown -R $USER:$USER /app
 
 exec su $USER -c "$@"
+
