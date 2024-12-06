@@ -1,6 +1,6 @@
 services:
   bearlytics:
-    build: .
+    image: ghcr.io/HermanMartinus/bearlytics:latest
     ports:
     - 8000:8000
     volumes:
@@ -14,3 +14,4 @@ services:
       UID: 1000
       GID: 1000
     restart: unless-stopped
+
