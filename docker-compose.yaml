@@ -9,7 +9,7 @@ services:
       CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-http://localhost}
       DB_PATH: ${DB_PATH:-/app/data/analytics.db}
       DEBUG: False
-      SALT_SECRET: ${SALT_SECRET:-?err}
+      SALT_SECRET: ${SALT_SECRET:?err}
       SECRET_KEY: ${SECRET_KEY:?err}
       UID: 1000
       GID: 1000
