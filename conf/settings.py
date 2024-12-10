@@ -65,9 +65,15 @@ WSGI_APPLICATION = 'conf.wsgi.application'
 DB_PATH = os.getenv('DB_PATH', '/app/db/db.sqlite3')
 
 with sqlite3.connect(DB_PATH) as conn:
-    conn.execute('PRAGMA cache_size = 10000;')
     conn.execute('PRAGMA journal_mode=WAL;')
     conn.execute('PRAGMA synchronous=NORMAL;')
+    conn.execute('PRAGMA busy_timeout=5000;')
+    conn.execute('PRAGMA cache_size=-20000;')
+    conn.execute('PRAGMA foreign_keys=ON;')
+    conn.execute('PRAGMA auto_vacuum=INCREMENTAL;')
+    conn.execute('PRAGMA temp_store=MEMORY;')
+    conn.execute('PRAGMA mmap_size=2147483648;')
+    conn.execute('PRAGMA page_size=8192;')
     
 DATABASES = {
     'default': {
