@@ -277,6 +277,8 @@ def generate_website_id():
     # Generate a random 7-character string using uppercase letters
     return ''.join(random.choices(string.ascii_uppercase, k=7))
 
+
+@login_required(login_url='login')
 def all_hits(request):
     hits = PageView.objects.all().order_by('-timestamp')[:100]
     return render(request, 'all_hits.html', {'hits': hits})
