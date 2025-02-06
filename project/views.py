@@ -5,6 +5,7 @@ import hashlib
 import base64
 from datetime import timedelta
 import user_agents
+import geoip2
 
 from django.utils import timezone
 from django.db.models import Q
@@ -17,6 +18,7 @@ from django.db.models import Subquery
 from django.db.models import Window
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
+from django.contrib.gis.geoip2 import GeoIP2
 from django.contrib.auth.models import User
 
 from .models import PageView, Website
@@ -59,14 +61,14 @@ def hit(request, website_id):
     browser = browser.replace("Mobile", "").replace("iOS", "").replace("WebView", "").replace("UI/WK", "").strip()
     device = "Mobile" if user_agent.is_mobile else "Desktop"
 
-    # Get country from CloudFlare header (if available)
-    country = request.META.get('HTTP_CF_IPCOUNTRY', 'unknown')
-
     # Get the real IP address
     ip = request.META.get('HTTP_X_FORWARDED_FOR', '') or \
          request.META.get('HTTP_CF_CONNECTING_IP', '') or \
          request.META.get('REMOTE_ADDR', '')
     ip = ip.split(',')[0].strip()
+
+    # Get country from CloudFlare header (if available) otherwise do an IP lookup
+    country = request.META.get('HTTP_CF_IPCOUNTRY', get_country(ip))
 
     # Generate ID using IP, User Agent, current date, and secret
     date = timezone.now().strftime('%Y-%m-%d')
@@ -98,6 +100,24 @@ def hit(request, website_id):
     )
 
     return response
+
+
+def get_country(user_ip):
+    # Test IPs from different countries
+    # user_ip = '45.222.31.178'  # South Africa
+    # user_ip = '103.48.198.141'  # India
+    # user_ip = '185.53.179.29'  # Germany 
+    # user_ip = '156.146.56.161'  # United States
+    # user_ip = '223.252.33.75'  # China
+    # user_ip = '197.255.255.246'  # Nigeria
+    # user_ip = '1.179.183.86'  # Thailand
+    try:
+        g = GeoIP2()
+        country = g.country(user_ip)
+
+        return country['country_name']
+    except (geoip2.errors.AddressNotFoundError, Exception):
+        return 'unknown'
 
 
 def extract_basic_language(lang_header):
